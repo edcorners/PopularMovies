@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.popmovies.edison.popularmovies.R;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,18 +17,29 @@ import java.util.List;
  */
 public class MoviesAdapter extends ArrayAdapter<Movie> {
 
-    public MoviesAdapter(Context context, List<Movie> movies){
-        super(context,0,movies);
+    private static class ViewHolder {
+        ImageView movieImageView;
+    }
+
+    public MoviesAdapter(Context context, List<Movie> movies) {
+        super(context, 0, movies);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Movie movie = getItem(position);
-        View rootView = LayoutInflater.from(getContext()).inflate(R.layout.item_movie, parent, false);
+        ViewHolder viewHolder;
+        if (convertView == null) {
+            viewHolder = new ViewHolder();
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_movie, parent, false);
+            viewHolder.movieImageView = (ImageView) convertView.findViewById(R.id.imageView);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
 
-        ImageView image = (ImageView) rootView.findViewById(R.id.imageView);
-        Picasso.with(getContext()).load(movie.getPosterUri().toString()).into(image);
+        Picasso.with(getContext()).load(movie.getPosterUri().toString()).into(viewHolder.movieImageView);
 
-        return rootView;
+        return convertView;
     }
 }

@@ -112,7 +112,8 @@ public class Movie {
         if (!title.equals(movie.title)) return false;
         if (posterUri != null ? !posterUri.equals(movie.posterUri) : movie.posterUri != null)
             return false;
-        if (overview != null ? !overview.equals(movie.overview) : movie.overview != null) return false;
+        if (overview != null ? !overview.equals(movie.overview) : movie.overview != null)
+            return false;
         return !(releaseDate != null ? !releaseDate.equals(movie.releaseDate) : movie.releaseDate != null);
 
     }

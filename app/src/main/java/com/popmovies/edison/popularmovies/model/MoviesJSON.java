@@ -14,7 +14,8 @@ public enum MoviesJSON {
     RATING("vote_average");
 
     private String key;
-    MoviesJSON(String key){
+
+    MoviesJSON(String key) {
         this.key = key;
     }
 

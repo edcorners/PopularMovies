@@ -20,7 +20,8 @@ public enum TMDBAPI {
     ORIGINAL("original");
 
     private String value;
-    TMDBAPI(String value){
+
+    TMDBAPI(String value) {
         this.value = value;
     }
 
