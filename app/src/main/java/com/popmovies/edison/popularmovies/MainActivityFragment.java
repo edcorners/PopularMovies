@@ -1,8 +1,10 @@
 package com.popmovies.edison.popularmovies;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,7 +46,11 @@ public class MainActivityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-        String sortBy = "popularity.desc";
+        SharedPreferences sharedPrefs =
+                PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        String sortBy = sharedPrefs.getString(
+                getString(R.string.pref_sort_order_key),
+                getString(R.string.pref_sort_by_popularity));
         fetchMoviesTask.execute(sortBy);
     }
 
