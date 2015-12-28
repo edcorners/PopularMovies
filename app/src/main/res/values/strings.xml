@@ -13,5 +13,8 @@
     <string name="sort_order_title">Sort order</string>
     <string name="title_activity_settings">Settings</string>
     <string name="pref_header_general">General</string>
+    <string name="title_activity_movie_detail">Movie Detail</string>
+
+    <string name="parcelable_movie_key" translatable="false">movie</string>
 
 </resources>

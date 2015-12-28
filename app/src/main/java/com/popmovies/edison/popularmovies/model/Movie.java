@@ -1,10 +1,14 @@
 package com.popmovies.edison.popularmovies.model;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.popmovies.edison.popularmovies.BuildConfig;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +17,7 @@ import org.json.JSONObject;
  * Created by Edison on 12/18/2015.
  */
 public class Movie implements Parcelable {
+    public static final String RATING_SCALE = "/10";
     private long id;
     private String title;
     private Uri posterUri;
@@ -45,7 +50,7 @@ public class Movie implements Parcelable {
         this.title = jsonMovie.getString(MoviesJSON.ORIGINAL_TITLE.getKey());
 
         Uri.Builder uriBuilder = Uri.parse(TMDBAPI.IMAGE_BASE_URL.getValue()).buildUpon()
-                .appendPath(TMDBAPI.W185.getValue())//TODO Parametrize
+                .appendPath(TMDBAPI.W185.getValue())
                 .appendPath(jsonMovie.getString(MoviesJSON.POSTER_PATH.getKey()).substring(1));
         this.posterUri = uriBuilder.build();
         this.overview = jsonMovie.getString(MoviesJSON.OVERVIEW.getKey());
@@ -70,7 +75,7 @@ public class Movie implements Parcelable {
         dest.writeString(releaseDate);
     }
 
-    public final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         @Override
         public Movie createFromParcel(Parcel parcel) {
             return new Movie(parcel);
@@ -82,6 +87,33 @@ public class Movie implements Parcelable {
         }
 
     };
+
+    // Business methods
+
+    public TextView setTitle(TextView movieTitle) {
+        movieTitle.setText(this.title);
+        return movieTitle;
+    }
+
+    public ImageView setPoster(Context context, ImageView poster) {
+        Picasso.with(context).load(posterUri.toString()).into(poster);
+        return poster;
+    }
+
+    public TextView setOverview(TextView movieOverview) {
+        movieOverview.setText(this.overview);
+        return movieOverview;
+    }
+
+    public TextView setRating(TextView movieRating) {
+        movieRating.setText(this.rating + RATING_SCALE);
+        return movieRating;
+    }
+
+    public TextView setReleaseDate(TextView movieReleaseDate) {
+        movieReleaseDate.setText(this.releaseDate);
+        return movieReleaseDate;
+    }
 
     // Object methods
 
@@ -176,4 +208,5 @@ public class Movie implements Parcelable {
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
     }
+
 }

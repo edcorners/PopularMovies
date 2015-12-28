@@ -5,7 +5,6 @@
     tools:context="com.popmovies.edison.popularmovies.MainActivityFragment"
     tools:showIn="@layout/activity_main"
     android:numColumns="2"
-    android:id="@+id/movies_grid_view"
-    android:minHeight="100dp">
+    android:id="@+id/movies_grid_view">
 
 </GridView>
