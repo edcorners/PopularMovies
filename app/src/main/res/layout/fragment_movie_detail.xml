@@ -14,14 +14,9 @@
         android:id="@+id/details_title_frame">
 
         <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
+            android:text="Title"
             android:id="@+id/details_movie_title"
-            android:layout_gravity="center_vertical"
-            android:textSize="35sp"
-            android:layout_margin="30dp" />
+            style="@style/details_movie_title" />
     </FrameLayout>
 
     <ScrollView
@@ -37,55 +32,42 @@
             android:columnCount="2">
 
             <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                style="@style/details_table_row"
                 android:id="@+id/details_table_row_1">
 
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/details_movie_poster"
                     android:adjustViewBounds="true"
-                    android:layout_weight="1"
-                    android:layout_margin="20dp" />
+                    style="@style/details_movie_property_element" />
 
                 <LinearLayout
                     android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/details_movie_attributes"
-                    android:layout_weight="1"
-                    android:layout_margin="20dp">
+                    style="@style/details_movie_property_element">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Large Text"
+                        android:text="YEAR"
                         android:id="@+id/details_movie_year" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="Small Text"
+                        android:text="rating"
                         android:id="@+id/details_movie_rating" />
                 </LinearLayout>
             </TableRow>
             <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/details_table_row_2">
+                android:id="@+id/details_table_row_2"
+                style="@style/details_table_row">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Small Text"
+                    android:text="Overview"
                     android:id="@+id/details_movie_overview"
-                    android:layout_margin="15dp"
-                    android:layout_span="2"
-                    android:layout_weight="1" />
+                    style="@style/details_movie_overview" />
             </TableRow>
         </TableLayout>
     </ScrollView>

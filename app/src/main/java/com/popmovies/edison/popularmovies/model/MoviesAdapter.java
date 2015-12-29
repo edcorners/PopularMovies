@@ -30,26 +30,21 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final Movie movie = getItem(position);
-        ViewHolder viewHolder = null;
         if (convertView == null) {
-            viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_movie, parent, false);
-            viewHolder.movieImageView = (ImageView) convertView.findViewById(R.id.movie_poster_image_view);
-            viewHolder.movieImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Context context = getContext();
-                    Intent detailsIntent = new Intent(context, MovieDetail.class);
-                    detailsIntent.putExtra(context.getString(R.string.parcelable_movie_key), movie);
-                    context.startActivity(detailsIntent);
-                }
-            });
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
         }
+        ImageView movieImageView = (ImageView) convertView.findViewById(R.id.movie_poster_image_view);
+        movieImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = getContext();
+                Intent detailsIntent = new Intent(context, MovieDetail.class);
+                detailsIntent.putExtra(context.getString(R.string.parcelable_movie_key), movie);
+                context.startActivity(detailsIntent);
+            }
+        });
 
-        Picasso.with(getContext()).load(movie.getPosterUri().toString()).into(viewHolder.movieImageView);
+        Picasso.with(getContext()).load(movie.getPosterUri().toString()).into(movieImageView);
 
         return convertView;
     }
