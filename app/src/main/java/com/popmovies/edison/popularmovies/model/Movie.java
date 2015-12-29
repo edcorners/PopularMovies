@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.format.DateUtils;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,49 +15,81 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Edison on 12/18/2015.
  */
 public class Movie implements Parcelable {
-    public static final String RATING_SCALE = "/10";
+
+    public static final String NO_POSTER_W185 = "https://assets.tmdb.org/assets/7f29bd8b3370c71dd379b0e8b570887c/images/no-poster-w185-v2.png";
+    private final String LOG_TAG = Movie.class.getSimpleName();
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+    private static final SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+    private static final String RATING_SCALE = "/10";
+
     private long id;
     private String title;
     private Uri posterUri;
     private String overview;
     private double rating;
-    private String releaseDate;
+    private Date releaseDate;
 
     // Constructors
 
-    public Movie(long id, String title, Uri posterUri, String overview, double rating, String releaseDate) {
+    public Movie(long id, String title, Uri posterUri, String overview, double rating, String releaseDate){
         this.id = id;
         this.title = title;
         this.posterUri = posterUri;
         this.overview = overview;
         this.rating = rating;
-        this.releaseDate = releaseDate;
+        try {
+            this.releaseDate = dateFormat.parse(releaseDate);
+        } catch (ParseException e) {
+            Log.e(LOG_TAG, "Error ", e);
+            this.releaseDate = null;
+        }
     }
 
-    private Movie(Parcel in){
+    private Movie(Parcel in) {
         this.id = in.readLong();
         this.title = in.readString();
         this.posterUri = Uri.parse(in.readString());
         this.overview = in.readString();
         this.rating = in.readDouble();
-        this.releaseDate = in.readString();
+        try {
+            this.releaseDate = dateFormat.parse(in.readString());
+        } catch (ParseException e) {
+            Log.e(LOG_TAG, "Error ", e);
+            this.releaseDate = null;
+        }
     }
 
-    public Movie(JSONObject jsonMovie) throws JSONException {
+    public Movie(JSONObject jsonMovie) throws JSONException{
         this.id = jsonMovie.getLong(MoviesJSON.ID.getKey());
         this.title = jsonMovie.getString(MoviesJSON.ORIGINAL_TITLE.getKey());
-
-        Uri.Builder uriBuilder = Uri.parse(TMDBAPI.IMAGE_BASE_URL.getValue()).buildUpon()
-                .appendPath(TMDBAPI.W185.getValue())
-                .appendPath(jsonMovie.getString(MoviesJSON.POSTER_PATH.getKey()).substring(1));
+        String posterPath = jsonMovie.getString(MoviesJSON.POSTER_PATH.getKey());
+        Uri.Builder uriBuilder = null;
+        if(!posterPath.equalsIgnoreCase("null")){
+            uriBuilder = Uri.parse(TMDBAPI.IMAGE_BASE_URL.getValue()).buildUpon()
+                    .appendPath(TMDBAPI.W185.getValue())
+                    .appendPath(posterPath.substring(1)); //trim escape char
+        }else{
+            uriBuilder = Uri.parse(NO_POSTER_W185).buildUpon();
+        }
         this.posterUri = uriBuilder.build();
         this.overview = jsonMovie.getString(MoviesJSON.OVERVIEW.getKey());
         this.rating = jsonMovie.getDouble(MoviesJSON.RATING.getKey());
-        this.releaseDate = jsonMovie.getString(MoviesJSON.RELEASE_DATE.getKey());
+        String date = jsonMovie.getString(MoviesJSON.RELEASE_DATE.getKey());
+        Log.v(LOG_TAG, "date to parse "+date);
+        try {
+            this.releaseDate = dateFormat.parse(date);
+        } catch (ParseException e) {
+            Log.e(LOG_TAG, "Error ", e);
+            this.releaseDate = null;
+        }
     }
 
     // Parcelable implementation
@@ -72,7 +106,8 @@ public class Movie implements Parcelable {
         dest.writeString(posterUri.toString());
         dest.writeString(overview);
         dest.writeDouble(rating);
-        dest.writeString(releaseDate);
+        String date = releaseDate == null ? "" : dateFormat.format(releaseDate);
+        dest.writeString(date);
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
@@ -111,7 +146,8 @@ public class Movie implements Parcelable {
     }
 
     public TextView setReleaseDate(TextView movieReleaseDate) {
-        movieReleaseDate.setText(this.releaseDate);
+        String date = this.releaseDate == null ? "-" : yearFormat.format(this.releaseDate);
+        movieReleaseDate.setText(date);
         return movieReleaseDate;
     }
 
@@ -201,11 +237,11 @@ public class Movie implements Parcelable {
         this.rating = rating;
     }
 
-    public String getReleaseDate() {
+    public Date getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
+    public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
     }
 

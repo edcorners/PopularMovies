@@ -16,5 +16,6 @@
     <string name="title_activity_movie_detail">Movie Detail</string>
 
     <string name="parcelable_movie_key" translatable="false">movie</string>
+    <string name="vote_count_gte" translatable="false">vote_count.gte</string>
 
 </resources>

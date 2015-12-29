@@ -1,14 +1,17 @@
 package com.popmovies.edison.popularmovies;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +34,9 @@ public class MovieDetailFragment extends Fragment {
         Movie movie = (Movie)caller.getParcelableExtra(getString(R.string.parcelable_movie_key));
         TextView movieTitle = (TextView)rootView.findViewById(R.id.details_movie_title);
         movie.setTitle(movieTitle);
+        FrameLayout movieFrame = (FrameLayout)rootView.findViewById(R.id.details_title_frame);
+        movieFrame.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        movieTitle.setTextColor(ContextCompat.getColor(getContext(),R.color.colorWhite));
         ImageView moviePoster = (ImageView)rootView.findViewById(R.id.details_movie_poster);
         movie.setPoster(getContext(), moviePoster);
         TextView movieOverview = (TextView)rootView.findViewById(R.id.details_movie_overview);

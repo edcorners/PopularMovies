@@ -183,6 +183,10 @@ public class MainActivityFragment extends Fragment {
                     .appendQueryParameter(TMDBAPI.SORT_BY.getValue(), sortOrder)
                     .appendQueryParameter(TMDBAPI.API_KEY.getValue(), BuildConfig.TMDB_API_KEY);
 
+            if(sortOrder.equalsIgnoreCase(getString(R.string.pref_sort_by_rating))){// Trying to get a more likely highest-rated list
+                uriBuilder.appendQueryParameter(getString(R.string.vote_count_gte),"1000");
+            }
+
             Log.v(LOG_TAG, " Built URI " + uriBuilder.build().toString());
             URL url = new URL(uriBuilder.build().toString());
 

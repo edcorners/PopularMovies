@@ -30,7 +30,7 @@ public class MoviesAdapter extends ArrayAdapter<Movie> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final Movie movie = getItem(position);
-        ViewHolder viewHolder;
+        ViewHolder viewHolder = null;
         if (convertView == null) {
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_movie, parent, false);
