@@ -1,41 +1,34 @@
 package com.popmovies.edison.popularmovies.activity.fragment;
 
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
-import com.popmovies.edison.popularmovies.BuildConfig;
 import com.popmovies.edison.popularmovies.R;
+import com.popmovies.edison.popularmovies.activity.async.FetchMoviesTask;
+import com.popmovies.edison.popularmovies.activity.async.FetchMoviesTaskListener;
 import com.popmovies.edison.popularmovies.model.Movie;
-import com.popmovies.edison.popularmovies.model.MoviesAdapter;
-import com.popmovies.edison.popularmovies.model.PagedMovieList;
-import com.popmovies.edison.popularmovies.model.TMDBAPI;
-import com.popmovies.edison.popularmovies.service.TMDBService;
+import com.popmovies.edison.popularmovies.model.MoviesArrayAdapter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.Call;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements FetchMoviesTaskListener<List<Movie>> {
 
-    protected MoviesAdapter moviesAdapter;
+    protected MoviesArrayAdapter moviesArrayAdapter;
     private ArrayList<Movie> movieList;
+    @Bind(R.id.movies_grid_view) GridView gridView;
 
     public MainActivityFragment() {
     }
@@ -58,9 +51,9 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        moviesAdapter = new MoviesAdapter(getContext(), movieList);
-        GridView gridView = (GridView) rootView.findViewById(R.id.movies_grid_view);
-        gridView.setAdapter(moviesAdapter);
+        moviesArrayAdapter = new MoviesArrayAdapter(getContext(), movieList);
+        ButterKnife.bind(this,rootView);
+        gridView.setAdapter(moviesArrayAdapter);
 
         return rootView;
     }
@@ -77,7 +70,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void fetchMovieList() {
-        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
+        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(getContext(),this);
         SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(this.getActivity());
         String sortBy = sharedPrefs.getString(
@@ -86,48 +79,9 @@ public class MainActivityFragment extends Fragment {
         fetchMoviesTask.execute(sortBy);
     }
 
-    public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
-
-        private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
-
-        @Override
-        protected List<Movie> doInBackground(String... params) {
-            String voteCountGte = "0";
-            String sortBy = params[0];
-            List<Movie> movies = null;
-
-            PagedMovieList pagedMovieList = new PagedMovieList();
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(TMDBAPI.BASE_URL.getValue())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            TMDBService service = retrofit.create(TMDBService.class);
-
-            if(sortBy.equalsIgnoreCase(getString(R.string.pref_sort_by_rating))){// Trying to get a more reasonable highest-rated list
-                voteCountGte = "1000";
-            }
-            Call<PagedMovieList> moviesCall = service.getMoviesSortedBy(sortBy,voteCountGte, BuildConfig.TMDB_API_KEY);
-
-            try {
-                Response<PagedMovieList> response = moviesCall.execute();
-                Log.v(LOG_TAG,response.raw().toString());
-                pagedMovieList = response.body();
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-            }
-            return pagedMovieList.getResults();
-        }
-
-        @Override
-        protected void onPostExecute(List<Movie> movies) {
-            super.onPostExecute(movies);
-            moviesAdapter.clear();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                moviesAdapter.addAll(movies);
-            }
-            movieList = (ArrayList<Movie>) movies;
-        }
-
+    @Override
+    public void onTaskComplete(List<Movie> result) {
+        moviesArrayAdapter.clear();
+        moviesArrayAdapter.addAll(result);
     }
-
 }

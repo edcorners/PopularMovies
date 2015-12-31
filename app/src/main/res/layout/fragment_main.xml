@@ -2,9 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context="com.popmovies.edison.popularmovies.MainActivityFragment"
+    tools:context=".activity.fragment.MainActivityFragment"
     tools:showIn="@layout/activity_main"
-    android:numColumns="2"
+    android:numColumns="auto_fit"
     android:id="@+id/movies_grid_view">
 
 </GridView>

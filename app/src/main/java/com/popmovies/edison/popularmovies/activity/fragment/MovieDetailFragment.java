@@ -18,10 +18,20 @@ import android.widget.TextView;
 import com.popmovies.edison.popularmovies.R;
 import com.popmovies.edison.popularmovies.model.Movie;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailFragment extends Fragment {
+
+    @Bind(R.id.details_movie_title) TextView movieTitle;
+    @Bind(R.id.details_title_frame) FrameLayout titleFrame;
+    @Bind(R.id.details_movie_poster) ImageView moviePoster;
+    @Bind(R.id.details_movie_overview) TextView movieOverview;
+    @Bind(R.id.details_movie_rating) TextView movieRating;
+    @Bind(R.id.details_movie_year) TextView movieReleaseDate;
 
     public MovieDetailFragment() {
         setHasOptionsMenu(true);
@@ -34,24 +44,14 @@ public class MovieDetailFragment extends Fragment {
         Intent caller = getActivity().getIntent();
         Movie movie = (Movie)caller.getParcelableExtra(getString(R.string.parcelable_movie_key));
 
-        TextView movieTitle = (TextView)rootView.findViewById(R.id.details_movie_title);
+        ButterKnife.bind(this,rootView);
+
         movie.setTitle(movieTitle);
         movieTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.colorWhite));
-
-        FrameLayout titleFrame = (FrameLayout)rootView.findViewById(R.id.details_title_frame);
         titleFrame.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
-
-
-        ImageView moviePoster = (ImageView)rootView.findViewById(R.id.details_movie_poster);
         movie.setPoster(getContext(), moviePoster);
-
-        TextView movieOverview = (TextView)rootView.findViewById(R.id.details_movie_overview);
         movie.setOverview(movieOverview);
-
-        TextView movieRating = (TextView)rootView.findViewById(R.id.details_movie_rating);
         movie.setRating(movieRating);
-
-        TextView movieReleaseDate = (TextView)rootView.findViewById(R.id.details_movie_year);
         movie.setReleaseDate(movieReleaseDate);
 
         return rootView;
