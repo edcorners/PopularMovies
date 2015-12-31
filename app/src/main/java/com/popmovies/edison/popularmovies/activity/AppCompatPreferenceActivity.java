@@ -1,4 +1,4 @@
-package com.popmovies.edison.popularmovies;
+package com.popmovies.edison.popularmovies.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

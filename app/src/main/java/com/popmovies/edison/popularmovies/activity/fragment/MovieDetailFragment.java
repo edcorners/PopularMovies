@@ -1,4 +1,4 @@
-package com.popmovies.edison.popularmovies;
+package com.popmovies.edison.popularmovies.activity.fragment;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.popmovies.edison.popularmovies.R;
 import com.popmovies.edison.popularmovies.model.Movie;
 
 /**
