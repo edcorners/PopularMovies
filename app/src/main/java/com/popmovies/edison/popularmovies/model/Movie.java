@@ -15,6 +15,10 @@ import com.popmovies.edison.popularmovies.BuildConfig;
 import com.popmovies.edison.popularmovies.R;
 import com.squareup.picasso.Picasso;
 
+import net.simonvt.schematic.annotation.DataType;
+import net.simonvt.schematic.annotation.NotNull;
+import net.simonvt.schematic.annotation.PrimaryKey;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,18 +39,23 @@ public class Movie implements Parcelable {
     @SerializedName("id")
     @Expose
     private long id;
+
     @SerializedName("title")
     @Expose
     private String title;
+
     @SerializedName("poster_path")
     @Expose
     private String posterPath;
+
     @SerializedName("overview")
     @Expose
     private String overview;
+
     @SerializedName("vote_average")
     @Expose
     private double rating;
+
     @SerializedName("release_date")
     @Expose
     private String releaseDateString;

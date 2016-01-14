@@ -7,7 +7,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.popmovies.edison.popularmovies.R;
+import com.squareup.okhttp.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +20,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Stetho.initialize(
+                Stetho.newInitializerBuilder(this)
+                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                        .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                        .build());
+        OkHttpClient client = new OkHttpClient();
+        client.networkInterceptors().add(new StethoInterceptor());
     }
 
     @Override

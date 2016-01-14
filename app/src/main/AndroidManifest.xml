@@ -37,6 +37,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
+
+        <provider
+            android:authorities="com.popmovies.edison.popularmovies.data.PopMoviesProvider"
+            android:name="com.popmovies.edison.popularmovies.data.generated.PopMoviesProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>
