@@ -109,12 +109,10 @@
                 style="@style/details_table_row"
                 android:id="@+id/details_table_row_5">
 
-                <LinearLayout
+                <ListView
                     android:orientation="vertical"
                     style="@style/details_reviews_trailers_list"
-                    android:id="@+id/details_trailers"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"></LinearLayout>
+                    android:id="@+id/details_trailers"></ListView>
             </TableRow>
 
             <!-- Reviews -->
@@ -139,12 +137,10 @@
                 style="@style/details_table_row"
                 android:id="@+id/details_table_row_8">
 
-                <LinearLayout
-                    android:orientation="vertical"
+                <ListView
                     style="@style/details_reviews_trailers_list"
                     android:id="@+id/details_reviews"
-                    android:layout_height="wrap_content"
-                    android:layout_width="fill_parent"></LinearLayout>
+                    android:orientation="vertical" />
             </TableRow>
 
         </TableLayout>

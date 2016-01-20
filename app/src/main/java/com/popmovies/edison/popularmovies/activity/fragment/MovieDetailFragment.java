@@ -51,7 +51,8 @@ public class MovieDetailFragment extends Fragment
     ListView trailersListView;
     private TrailersArrayAdapter trailersArrayAdapter;
 
-    @Bind(R.id.details_reviews) ListView reviewsListView;
+    @Bind(R.id.details_reviews)
+    ListView reviewsListView;
     private ReviewsArrayAdapter reviewsArrayAdapter;
 
     @Bind(R.id.details_movie_title) TextView movieTitle;
