@@ -1,5 +1,6 @@
 package com.popmovies.edison.popularmovies.model;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
@@ -13,6 +14,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.popmovies.edison.popularmovies.BuildConfig;
 import com.popmovies.edison.popularmovies.R;
+import com.popmovies.edison.popularmovies.data.MovieColumns;
 import com.squareup.picasso.Picasso;
 
 import net.simonvt.schematic.annotation.DataType;
@@ -140,8 +142,8 @@ public class Movie implements Parcelable {
     public ImageView setPoster(Context context, ImageView poster) {
         Picasso.with(context)
                 .load(getPosterUri())
-                .placeholder(R.drawable.ic_no_poster)
-                .error(R.drawable.ic_no_poster)
+                .placeholder(R.drawable.ic_popcorn_noposter)
+                .error(R.drawable.ic_popcorn_noposter)
                 .into(poster);
         return poster;
     }
@@ -160,6 +162,17 @@ public class Movie implements Parcelable {
         String date = this.releaseDateString == null ? "-" : yearFormat.format(getReleaseDate());
         movieReleaseDate.setText(date);
         return movieReleaseDate;
+    }
+
+    public ContentValues toContentValues() {
+        ContentValues cv = new ContentValues();
+        cv.put(MovieColumns.MOVIE_ID, id);
+        cv.put(MovieColumns.OVERVIEW, overview);
+        cv.put(MovieColumns.POSTER_PATH, posterPath);
+        cv.put(MovieColumns.RATING, rating);
+        cv.put(MovieColumns.TITLE, title);
+        cv.put(MovieColumns.RELEASE_DATE, releaseDateString);
+        return cv;
     }
 
     // Object methods

@@ -58,12 +58,12 @@ public class MoviesArrayAdapter extends ArrayAdapter<Movie> {
         if(posterUri != null) {
             Picasso.with(getContext()).
                     load(posterUri.toString())
-                    .placeholder(R.drawable.ic_no_poster)
-                    .error(R.drawable.ic_no_poster)
+                    .placeholder(R.drawable.ic_popcorn_noposter)
+                    .error(R.drawable.ic_popcorn_noposter)
                     .into(movieImageView);
         }else{
             Picasso.with(getContext()).
-                    load(R.drawable.ic_no_poster)
+                    load(R.drawable.ic_popcorn_noposter)
                     .into(movieImageView);
         }
     }

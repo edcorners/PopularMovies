@@ -22,7 +22,8 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/scrollView" >
+        android:id="@+id/details_scroll_view"
+        android:fillViewport="true">
 
         <TableLayout
             android:orientation="horizontal"
@@ -31,6 +32,7 @@
             android:id="@+id/details_table_movie_info"
             android:columnCount="2">
 
+            <!-- Poster, year, rating, favorite-->
             <TableRow
                 style="@style/details_table_row"
                 android:id="@+id/details_table_row_1">
@@ -58,8 +60,21 @@
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="rating"
                         android:id="@+id/details_movie_rating" />
+
+                    <ToggleButton
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textOn="On my list"
+                        android:textOff="Add to favorites"
+                        android:background="@color/colorPrimary"
+                        android:textColor="@color/colorWhite"
+                        android:id="@+id/details_favorite_toggle_button"
+                        android:drawableLeft="@drawable/favorite"/>
+
                 </LinearLayout>
             </TableRow>
+
+            <!-- Overview-->
             <TableRow
                 android:id="@+id/details_table_row_2"
                 style="@style/details_table_row">
@@ -67,8 +82,71 @@
                 <TextView
                     android:text="Overview"
                     android:id="@+id/details_movie_overview"
-                    style="@style/details_movie_overview" />
+                    style="@style/details_reviews_trailers_list" />
             </TableRow>
+
+            <!-- Trailers-->
+            <TableRow
+                style="@style/details_table_row"
+                android:id="@+id/details_table_row_3">
+                <View
+                    style="@style/horizontal_line"
+                    android:id="@+id/detail_separating_line_trailers"
+                />
+            </TableRow>
+            <TableRow
+                style="@style/details_table_row"
+                android:id="@+id/details_table_row_4">
+
+                <TextView
+                    android:text="@string/details_trailers_title"
+                    android:id="@+id/details_trailers_title"
+                    style="@style/details_title" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/details_table_row"
+                android:id="@+id/details_table_row_5">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    style="@style/details_reviews_trailers_list"
+                    android:id="@+id/details_trailers"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"></LinearLayout>
+            </TableRow>
+
+            <!-- Reviews -->
+            <TableRow
+                style="@style/details_table_row"
+                android:id="@+id/details_table_row_6">
+                <View
+                    android:id="@+id/detail_separating_line_reviews"
+                    style="@style/horizontal_line" />
+            </TableRow>
+            <TableRow
+                style="@style/details_table_row"
+                android:id="@+id/details_table_row_7">
+                <TextView
+                    style="@style/details_title"
+                    android:text="@string/details_reviews_title"
+                    android:id="@+id/details_reviews_title" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/details_table_row"
+                android:id="@+id/details_table_row_8">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    style="@style/details_reviews_trailers_list"
+                    android:id="@+id/details_reviews"
+                    android:layout_height="wrap_content"
+                    android:layout_width="fill_parent"></LinearLayout>
+            </TableRow>
+
         </TableLayout>
     </ScrollView>
 

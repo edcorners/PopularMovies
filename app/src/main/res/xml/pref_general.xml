@@ -6,4 +6,11 @@
         android:entryValues="@array/pref_sort_order_values"
         android:entries="@array/pref_sort_order_options"/>
 
+    <ListPreference android:title="@string/pref_vote_count_label"
+        android:summary="@string/pref_vote_count_summary"
+        android:key="@string/pref_vote_count_key"
+        android:defaultValue="@string/pref_1000_votes"
+        android:entryValues="@array/pref_vote_count_values"
+        android:entries="@array/pref_vote_count_options"/>
+
 </PreferenceScreen>

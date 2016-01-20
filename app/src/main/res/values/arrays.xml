@@ -9,4 +9,16 @@
         <item>@string/pref_sort_by_popularity</item>
         <item>@string/pref_sort_by_rating</item>
     </string-array>
+
+    <string-array name="pref_vote_count_options">
+        <item>@string/pref_1000_votes_label</item>
+        <item>@string/pref_500_votes_label</item>
+        <item>@string/pref_0_votes_label</item>
+    </string-array>
+
+    <string-array name="pref_vote_count_values">
+        <item>@string/pref_1000_votes</item>
+        <item>@string/pref_500_votes</item>
+        <item>@string/pref_0_votes</item>
+    </string-array>
 </resources>

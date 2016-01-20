@@ -76,7 +76,10 @@ public class MainActivityFragment extends Fragment implements FetchMoviesTaskLis
         String sortBy = sharedPrefs.getString(
                 getString(R.string.pref_sort_order_key),
                 getString(R.string.pref_sort_by_popularity));
-        fetchMoviesTask.execute(sortBy);
+        String voteCount = sharedPrefs.getString(
+                getString(R.string.pref_vote_count_key),
+                getString(R.string.pref_1000_votes));
+        fetchMoviesTask.execute(sortBy, voteCount);
     }
 
     @Override

@@ -14,8 +14,21 @@
     <string name="title_activity_settings">Settings</string>
     <string name="pref_header_general">General</string>
     <string name="title_activity_movie_detail">Movie Detail</string>
+    <!-- vote count settings -->
+    <string name="pref_vote_count_label">Min vote count (Applies to Highest-rated only)</string>
+    <string name="pref_vote_count_summary">Highest-rated movies are filtered by the minimum vote count</string>
+    <string name="pref_vote_count_key" translatable="false">vote_count</string>
+    <string name="pref_1000_votes_label" translatable="false">1000</string>
+    <string name="pref_500_votes_label" translatable="false">500</string>
+    <string name="pref_0_votes_label" translatable="false">0</string>
+    <string name="pref_1000_votes" translatable="false">1000</string>
+    <string name="pref_500_votes" translatable="false">500</string>
+    <string name="pref_0_votes" translatable="false">0</string>
+
 
     <string name="parcelable_movie_key" translatable="false">movie</string>
     <string name="vote_count_gte" translatable="false">vote_count.gte</string>
+    <string name="details_trailers_title">Trailers:</string>
+    <string name="details_reviews_title">Reviews:</string>
 
 </resources>

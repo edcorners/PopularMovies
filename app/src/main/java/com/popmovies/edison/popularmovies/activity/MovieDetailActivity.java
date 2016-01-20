@@ -7,8 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.popmovies.edison.popularmovies.R;
+import com.popmovies.edison.popularmovies.activity.async.FetchReviewsTaskListener;
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
