@@ -3,11 +3,13 @@
     <string-array name="pref_sort_order_options">
         <item>@string/pref_sort_by_popularity_label</item>
         <item>@string/pref_sort_by_rating_label</item>
+        <item>@string/pref_sort_by_favorites_label</item>
     </string-array>
 
     <string-array name="pref_sort_order_values">
         <item>@string/pref_sort_by_popularity</item>
         <item>@string/pref_sort_by_rating</item>
+        <item>@string/pref_sort_by_favorites</item>
     </string-array>
 
     <string-array name="pref_vote_count_options">

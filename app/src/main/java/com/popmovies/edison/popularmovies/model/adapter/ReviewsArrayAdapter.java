@@ -1,7 +1,6 @@
-package com.popmovies.edison.popularmovies.model;
+package com.popmovies.edison.popularmovies.model.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.popmovies.edison.popularmovies.R;
-import com.popmovies.edison.popularmovies.activity.fragment.MovieDetailFragment;
+import com.popmovies.edison.popularmovies.model.Review;
 
 import java.util.List;
 
@@ -41,7 +40,6 @@ public class ReviewsArrayAdapter extends ArrayAdapter<Review> {
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_review, parent, false);
-            Log.v(LOG_TAG, " Review Count:"+getCount());
         }
         ButterKnife.bind(this, convertView);
         review.setContent(reviewContentTextView);

@@ -64,8 +64,8 @@
                     <ToggleButton
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textOn="On my list"
-                        android:textOff="Add to favorites"
+                        android:textOn="@string/details_favorite_on"
+                        android:textOff="@string/details_favorite_off"
                         android:background="@color/colorPrimary"
                         android:textColor="@color/colorWhite"
                         android:id="@+id/details_favorite_toggle_button"
@@ -109,10 +109,10 @@
                 style="@style/details_table_row"
                 android:id="@+id/details_table_row_5">
 
-                <ListView
+                <LinearLayout
                     android:orientation="vertical"
                     style="@style/details_reviews_trailers_list"
-                    android:id="@+id/details_trailers"></ListView>
+                    android:id="@+id/details_trailers"></LinearLayout>
             </TableRow>
 
             <!-- Reviews -->
@@ -137,7 +137,7 @@
                 style="@style/details_table_row"
                 android:id="@+id/details_table_row_8">
 
-                <ListView
+                <LinearLayout
                     style="@style/details_reviews_trailers_list"
                     android:id="@+id/details_reviews"
                     android:orientation="vertical" />

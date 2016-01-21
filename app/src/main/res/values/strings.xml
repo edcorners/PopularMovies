@@ -7,8 +7,10 @@
     <!-- General settings -->
     <string name="pref_sort_by_rating" translatable="false">vote_average.desc</string>
     <string name="pref_sort_by_popularity" translatable="false">popularity.desc</string>
+    <string name="pref_sort_by_favorites" translatable="false">favorites</string>
     <string name="pref_sort_by_rating_label">Highest-rated</string>
     <string name="pref_sort_by_popularity_label">Most popular</string>
+    <string name="pref_sort_by_favorites_label">Favorites</string>
     <string name="pref_sort_order_key">sort_order</string>
     <string name="sort_order_title">Sort order</string>
     <string name="title_activity_settings">Settings</string>
@@ -30,5 +32,7 @@
     <string name="vote_count_gte" translatable="false">vote_count.gte</string>
     <string name="details_trailers_title">Trailers:</string>
     <string name="details_reviews_title">Reviews:</string>
+    <string name="details_favorite_on">On my list</string>
+    <string name="details_favorite_off">Add to favorites</string>
 
 </resources>

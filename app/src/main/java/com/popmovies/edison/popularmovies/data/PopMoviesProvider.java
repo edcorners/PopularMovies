@@ -2,8 +2,6 @@ package com.popmovies.edison.popularmovies.data;
 
 import android.net.Uri;
 
-import com.popmovies.edison.popularmovies.model.Trailer;
-
 import net.simonvt.schematic.annotation.ContentProvider;
 import net.simonvt.schematic.annotation.ContentUri;
 import net.simonvt.schematic.annotation.InexactContentUri;
@@ -21,6 +19,8 @@ public class PopMoviesProvider {
         String MOVIES = "movies";
         String REVIEW = "reviews";
         String TRAILER = "trailers";
+        String SORTING_ATTRIBUTES = "sorting_attributes";
+        String UPDATE_LOGS = "update_logs";
     }
 
     @TableEndpoint(table = PopMoviesDatabase.MOVIES) public static class Movies {
@@ -28,7 +28,7 @@ public class PopMoviesProvider {
         @ContentUri(
                 path = Path.MOVIES,
                 type = "vnd.android.cursor.dir/movie",
-                defaultSort = MovieColumns.TITLE + " ASC")
+                defaultSort = MovieColumns._ID + " ASC")
         public static final Uri CONTENT_URI = buildUri(Path.MOVIES);
 
         @InexactContentUri(
@@ -41,6 +41,22 @@ public class PopMoviesProvider {
         public static Uri withId(long id){
             return buildUri(Path.MOVIES, String.valueOf(id));
         }
+
+        @InexactContentUri(
+                name = "MOVIES_WITH_SORT",
+                path = Path.MOVIES + Path.SORTING_ATTRIBUTES + "/*",
+                type = "vnd.android.cursor.dir/movie",
+                whereColumn = PopMoviesDatabase.SORTING_ATTRIBUTES+"."+SortingAttributesColumns.PREFERENCE_CATEGORY,
+                pathSegment = 1,
+                join = "INNER JOIN "+PopMoviesDatabase.SORTING_ATTRIBUTES+" ON "+
+                        PopMoviesDatabase.MOVIES+"."+MovieColumns.MOVIE_ID + " = " +
+                        PopMoviesDatabase.SORTING_ATTRIBUTES+"."+SortingAttributesColumns.MOVIE_ID,
+                defaultSort = PopMoviesDatabase.SORTING_ATTRIBUTES+"."+SortingAttributesColumns.ORDINAL + " ASC"
+        )
+        public static Uri withSortingAttribute(String sort){
+            return buildUri(Path.MOVIES, Path.SORTING_ATTRIBUTES, sort);
+        }
+
     }
 
     @TableEndpoint(table = PopMoviesDatabase.REVIEWS) public static class Reviews {
@@ -52,14 +68,14 @@ public class PopMoviesProvider {
         public static final Uri CONTENT_URI = buildUri(Path.REVIEW);
 
         @InexactContentUri(
-                name = "REVIEW_ID",
-                path = Path.REVIEW + "/#",
+                name = "REVIEW_BY_MOVIE_ID",
+                path = Path.MOVIES + "/#/"+Path.REVIEW,
                 type = "vnd.android.cursor.dir/review",
-                whereColumn = ReviewColumns.REVIEW_ID,
+                whereColumn = ReviewColumns.MOVIE_ID,
                 pathSegment = 1
         )
-        public static Uri withId(long id){
-            return buildUri(Path.REVIEW, String.valueOf(id));
+        public static Uri withMovieId(long id){
+            return buildUri(Path.MOVIES, String.valueOf(id), Path.REVIEW);
         }
     }
 
@@ -72,15 +88,36 @@ public class PopMoviesProvider {
         public static final Uri CONTENT_URI = buildUri(Path.TRAILER);
 
         @InexactContentUri(
-                name = "TRAILER_ID",
-                path = Path.TRAILER + "/#",
+                name = "TRAILER_BY_MOVIE_ID",
+                path = Path.MOVIES + "/#/"+Path.TRAILER,
                 type = "vnd.android.cursor.dir/trailer",
-                whereColumn = TrailerColumns.TRAILER_ID,
+                whereColumn = TrailerColumns.MOVIE_ID,
                 pathSegment = 1
         )
-        public static Uri withId(long id){
-            return buildUri(Path.TRAILER, String.valueOf(id));
+        public static Uri withMovieId(long id){
+            return buildUri(Path.MOVIES, String.valueOf(id), Path.TRAILER);
         }
+
+    }
+
+    @TableEndpoint(table = PopMoviesDatabase.UPDATE_LOG) public static class UpdateLogs {
+
+        @ContentUri(
+                path = Path.UPDATE_LOGS,
+                type = "vnd.android.cursor.dir/update_log")
+        public static final Uri CONTENT_URI = buildUri(Path.UPDATE_LOGS);
+
+        @InexactContentUri(
+                name = "UPDATE_BY_SORTING_ATTRIBUTE",
+                path = Path.UPDATE_LOGS + "/*",
+                type = "vnd.android.cursor.item/update_log",
+                whereColumn = UpdateLogColumns.SORTING_ATTRIBUTE,
+                pathSegment = 1
+        )
+        public static Uri withSortingAttribute(String sort){
+            return buildUri(Path.UPDATE_LOGS, Path.SORTING_ATTRIBUTES, sort);
+        }
+
     }
 
     private static Uri buildUri(String ... paths){

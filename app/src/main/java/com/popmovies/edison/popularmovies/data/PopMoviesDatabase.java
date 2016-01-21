@@ -10,6 +10,8 @@ import net.simonvt.schematic.annotation.Table;
 public final class PopMoviesDatabase {
     public static final int VERSION = 1;
 
+    @Table(UpdateLogColumns.class) public static final String UPDATE_LOG = "update_logs";
+    @Table(SortingAttributesColumns.class) public static final String SORTING_ATTRIBUTES = "sorting_attributes";
     @Table(MovieColumns.class) public static final String MOVIES = "movies";
     @Table(TrailerColumns.class) public static final String TRAILERS = "trailers";
     @Table(ReviewColumns.class) public static final String REVIEWS = "reviews";

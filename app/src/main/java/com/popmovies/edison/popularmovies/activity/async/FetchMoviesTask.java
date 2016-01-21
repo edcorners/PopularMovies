@@ -1,17 +1,24 @@
 package com.popmovies.edison.popularmovies.activity.async;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.popmovies.edison.popularmovies.BuildConfig;
 import com.popmovies.edison.popularmovies.R;
+import com.popmovies.edison.popularmovies.Utility;
+import com.popmovies.edison.popularmovies.data.PopMoviesProvider;
+import com.popmovies.edison.popularmovies.data.UpdateLogColumns;
 import com.popmovies.edison.popularmovies.model.Movie;
 import com.popmovies.edison.popularmovies.model.PagedMovieList;
 import com.popmovies.edison.popularmovies.model.TMDBAPI;
 import com.popmovies.edison.popularmovies.service.TMDBService;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import retrofit.Call;
@@ -24,6 +31,7 @@ import retrofit.Retrofit;
  */
 public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
 
+    public static final int UPDATE_FREQ_IN_MILLIS = 10800000; //3 hours
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
     private FetchMoviesTaskListener<List<Movie>> listener;
     private Context context;
@@ -32,6 +40,23 @@ public class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
         this.context = context;
         this.listener = listener;
     }
+
+    private boolean isUpdateTime() throws ParseException {
+        boolean updateTime = true;
+
+        String preferredSort = Utility.getPreferredSortOrder(context);
+        Cursor cursor = context.getContentResolver().query(PopMoviesProvider.UpdateLogs.withSortingAttribute(preferredSort),null,null,null,null);
+        cursor.moveToFirst();
+        if(cursor.getCount() >  0){
+            int indexForDate =  cursor.getColumnIndex(UpdateLogColumns.DATE);
+            Date lastUpdate = Utility.dateTimeFormat.parse(cursor.getString(indexForDate));
+            long lastUpdateMillis = lastUpdate.getTime();
+            long currentTimeMillis = Calendar.getInstance().getTimeInMillis();
+            updateTime = Math.abs(currentTimeMillis - lastUpdateMillis) >= 10800000;
+        }
+        return updateTime;
+    }
+
 
     @Override
     protected List<Movie> doInBackground(String... params) {

@@ -2,6 +2,7 @@ package com.popmovies.edison.popularmovies.model;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,6 +15,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.popmovies.edison.popularmovies.BuildConfig;
 import com.popmovies.edison.popularmovies.R;
+import com.popmovies.edison.popularmovies.Utility;
 import com.popmovies.edison.popularmovies.data.MovieColumns;
 import com.squareup.picasso.Picasso;
 
@@ -34,8 +36,6 @@ import java.util.Date;
 public class Movie implements Parcelable {
 
     private final String LOG_TAG = Movie.class.getSimpleName();
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
-    private static final SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
     private static final String RATING_SCALE = "/10";
 
     @SerializedName("id")
@@ -80,6 +80,48 @@ public class Movie implements Parcelable {
         this.overview = in.readString();
         this.rating = in.readDouble();
         this.releaseDateString = in.readString();
+    }
+
+    public Movie(Cursor cursor){
+        int index = cursor.getColumnIndex(MovieColumns.MOVIE_ID);
+        this.id = cursor.getLong(index);
+        index = cursor.getColumnIndex(MovieColumns.TITLE);
+        this.title = cursor.getString(index);
+        index = cursor.getColumnIndex(MovieColumns.OVERVIEW);
+        this.overview = cursor.getString(index);
+        index = cursor.getColumnIndex(MovieColumns.POSTER_PATH);
+        this.posterPath = cursor.getString(index);
+        index = cursor.getColumnIndex(MovieColumns.RATING);
+        this.rating = cursor.getDouble(index);
+        index = cursor.getColumnIndex(MovieColumns.RELEASE_DATE);
+        this.releaseDateString = cursor.getString(index);
+    }
+
+    public enum MovieColumnProjection{
+        ID(MovieColumns.MOVIE_ID),
+        TITLE(MovieColumns.TITLE),
+        OVERVIEW(MovieColumns.OVERVIEW),
+        POSTER_PATH(MovieColumns.POSTER_PATH),
+        RATING(MovieColumns.RATING),
+        RELEASE_DATE(MovieColumns.RELEASE_DATE);
+
+        private String columnName;
+
+        MovieColumnProjection(String columnName) {
+            this.columnName = columnName;
+        }
+
+        public String getColumnName() {
+            return columnName;
+        }
+
+        public void setColumnName(String columnName) {
+            this.columnName = columnName;
+        }
+
+        public static String[] getProjection(){
+            return new String[]{ID.columnName,TITLE.columnName,OVERVIEW.columnName, POSTER_PATH.columnName, RATING.columnName, RELEASE_DATE.columnName};
+        }
     }
 
     // Parcelable implementation
@@ -127,7 +169,7 @@ public class Movie implements Parcelable {
     public Date getReleaseDate() {
         Date parsedDate = null;
         try {
-            parsedDate = dateFormat.parse(releaseDateString);
+            parsedDate = Utility.dateFormat.parse(releaseDateString);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -159,7 +201,7 @@ public class Movie implements Parcelable {
     }
 
     public TextView setReleaseDate(TextView movieReleaseDate) {
-        String date = this.releaseDateString == null ? "-" : yearFormat.format(getReleaseDate());
+        String date = this.releaseDateString == null ? "-" : Utility.yearFormat.format(getReleaseDate());
         movieReleaseDate.setText(date);
         return movieReleaseDate;
     }
