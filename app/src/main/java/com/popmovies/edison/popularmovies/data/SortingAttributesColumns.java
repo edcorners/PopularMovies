@@ -22,5 +22,5 @@ public interface SortingAttributesColumns {
     String PREFERENCE_CATEGORY = "preference_category";
 
     @DataType(DataType.Type.INTEGER)
-    String ORDINAL = "ordinal";
+    String POSITION = "position";
 }

@@ -111,7 +111,7 @@ public class MovieDetailFragment extends Fragment
     }
 
     private void updateFavoriteButtonState(Movie movie) {
-        Cursor movieCursor = getContext().getContentResolver().query(PopMoviesProvider.Movies.withId(movie.getId()), null, null, null, null);
+        Cursor movieCursor = getContext().getContentResolver().query(PopMoviesProvider.Movies.withMovieId(movie.getId()), null, null, null, null);
         movieCursor.moveToFirst();
         if (movieCursor.getCount() > 0) {
             favoriteToggleButton.setChecked(true);
@@ -167,7 +167,7 @@ public class MovieDetailFragment extends Fragment
         batchDeletes.add(builder.build());
         builder = ContentProviderOperation.newDelete(PopMoviesProvider.Reviews.withMovieId(movie.getId())); // delete reviews
         batchDeletes.add(builder.build());
-        builder = ContentProviderOperation.newDelete(PopMoviesProvider.Movies.withId(movie.getId())); // delete movie
+        builder = ContentProviderOperation.newDelete(PopMoviesProvider.Movies.withMovieId(movie.getId())); // delete movie
         batchDeletes.add(builder.build());
         return batchDeletes;
     }

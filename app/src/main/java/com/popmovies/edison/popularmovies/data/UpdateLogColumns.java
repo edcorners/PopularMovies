@@ -20,5 +20,5 @@ public interface UpdateLogColumns {
     String SORTING_ATTRIBUTE = "sorting_attribute";
 
     @DataType(DataType.Type.TEXT)
-    String DATE = "date";
+    String LAST_UPDATE = "last_update";
 }

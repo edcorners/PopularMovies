@@ -10,9 +10,13 @@ import android.view.MenuItem;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.popmovies.edison.popularmovies.R;
+import com.popmovies.edison.popularmovies.activity.async.FetchMoviesTask;
+import com.popmovies.edison.popularmovies.activity.async.FetchMoviesTaskListener;
 import com.squareup.okhttp.OkHttpClient;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
+
+    private final String MOVIES_FRAGMENT_TAG = "MFTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

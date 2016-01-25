@@ -6,28 +6,18 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.format.DateUtils;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.popmovies.edison.popularmovies.BuildConfig;
 import com.popmovies.edison.popularmovies.R;
 import com.popmovies.edison.popularmovies.Utility;
 import com.popmovies.edison.popularmovies.data.MovieColumns;
+import com.popmovies.edison.popularmovies.data.PopMoviesDatabase;
 import com.squareup.picasso.Picasso;
 
-import net.simonvt.schematic.annotation.DataType;
-import net.simonvt.schematic.annotation.NotNull;
-import net.simonvt.schematic.annotation.PrimaryKey;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -98,12 +88,13 @@ public class Movie implements Parcelable {
     }
 
     public enum MovieColumnProjection{
-        ID(MovieColumns.MOVIE_ID),
-        TITLE(MovieColumns.TITLE),
-        OVERVIEW(MovieColumns.OVERVIEW),
-        POSTER_PATH(MovieColumns.POSTER_PATH),
-        RATING(MovieColumns.RATING),
-        RELEASE_DATE(MovieColumns.RELEASE_DATE);
+        _ID(PopMoviesDatabase.MOVIES+"."+MovieColumns._ID),
+        MOVIE_ID(PopMoviesDatabase.MOVIES+"."+MovieColumns.MOVIE_ID),
+        TITLE(PopMoviesDatabase.MOVIES+"."+MovieColumns.TITLE),
+        OVERVIEW(PopMoviesDatabase.MOVIES+"."+MovieColumns.OVERVIEW),
+        POSTER_PATH(PopMoviesDatabase.MOVIES+"."+MovieColumns.POSTER_PATH),
+        RATING(PopMoviesDatabase.MOVIES+"."+MovieColumns.RATING),
+        RELEASE_DATE(PopMoviesDatabase.MOVIES+"."+MovieColumns.RELEASE_DATE);
 
         private String columnName;
 
@@ -120,7 +111,7 @@ public class Movie implements Parcelable {
         }
 
         public static String[] getProjection(){
-            return new String[]{ID.columnName,TITLE.columnName,OVERVIEW.columnName, POSTER_PATH.columnName, RATING.columnName, RELEASE_DATE.columnName};
+            return new String[]{_ID.columnName,MOVIE_ID.columnName,TITLE.columnName,OVERVIEW.columnName, POSTER_PATH.columnName, RATING.columnName, RELEASE_DATE.columnName};
         }
     }
 
