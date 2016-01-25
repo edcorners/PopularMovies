@@ -1,152 +1,115 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/details_layout"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    tools:context=".activity.fragment.MovieDetailFragment"
-    tools:showIn="@layout/activity_movie_detail"
     android:orientation="vertical"
-    android:id="@+id/details_layout">
+    tools:context=".activity.fragment.MovieDetailFragment"
+    tools:showIn="@layout/activity_movie_detail">
 
 
     <FrameLayout
+        android:id="@+id/details_title_frame"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/details_title_frame">
+        android:layout_height="wrap_content">
 
         <TextView
-            android:text="Title"
             android:id="@+id/details_movie_title"
-            style="@style/details_movie_title" />
+            style="@style/details_movie_title"
+            android:text="Title" />
     </FrameLayout>
 
+
     <ScrollView
+        android:id="@+id/details_scroll_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/details_scroll_view"
         android:fillViewport="true">
 
-        <TableLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:id="@+id/details_scrollable_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/details_table_movie_info"
-            android:columnCount="2">
-
-            <!-- Poster, year, rating, favorite-->
-            <TableRow
-                style="@style/details_table_row"
-                android:id="@+id/details_table_row_1">
-
+            android:orientation="vertical">
+            <!--Details-->
+            <LinearLayout
+                android:id="@+id/details_movie_poster_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!--Poster-->
                 <ImageView
                     android:id="@+id/details_movie_poster"
-                    android:adjustViewBounds="true"
-                    style="@style/details_movie_property_element" />
-
+                    style="@style/details_movie_property_element"
+                    android:adjustViewBounds="true" />
+                <!--Info-->
                 <LinearLayout
-                    android:orientation="vertical"
                     android:id="@+id/details_movie_attributes"
-                    style="@style/details_movie_property_element">
+                    style="@style/details_movie_property_element"
+                    android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/details_movie_year"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
                         android:text="YEAR"
-                        android:id="@+id/details_movie_year" />
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
 
                     <TextView
+                        android:id="@+id/details_movie_rating"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="rating"
-                        android:id="@+id/details_movie_rating" />
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
 
                     <ToggleButton
+                        android:id="@+id/details_favorite_toggle_button"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textOn="@string/details_favorite_on"
-                        android:textOff="@string/details_favorite_off"
                         android:background="@color/colorPrimary"
+                        android:drawableLeft="@drawable/favorite"
                         android:textColor="@color/colorWhite"
-                        android:id="@+id/details_favorite_toggle_button"
-                        android:drawableLeft="@drawable/favorite"/>
+                        android:textOff="@string/details_favorite_off"
+                        android:textOn="@string/details_favorite_on" />
 
                 </LinearLayout>
-            </TableRow>
 
+            </LinearLayout>
             <!-- Overview-->
-            <TableRow
-                android:id="@+id/details_table_row_2"
-                style="@style/details_table_row">
-
-                <TextView
-                    android:text="Overview"
-                    android:id="@+id/details_movie_overview"
-                    style="@style/details_reviews_trailers_list" />
-            </TableRow>
-
+            <TextView
+                android:id="@+id/details_movie_overview"
+                style="@style/details_reviews_trailers_list"
+                android:text="Overview" />
             <!-- Trailers-->
-            <TableRow
-                style="@style/details_table_row"
-                android:id="@+id/details_table_row_3">
-                <View
-                    style="@style/horizontal_line"
-                    android:id="@+id/detail_separating_line_trailers"
-                />
-            </TableRow>
-            <TableRow
-                style="@style/details_table_row"
-                android:id="@+id/details_table_row_4">
+            <View
+                android:id="@+id/detail_separating_line_trailers"
+                style="@style/horizontal_line" />
 
-                <TextView
-                    android:text="@string/details_trailers_title"
-                    android:id="@+id/details_trailers_title"
-                    style="@style/details_title" />
-            </TableRow>
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/details_table_row"
-                android:id="@+id/details_table_row_5">
+            <TextView
+                android:id="@+id/details_trailers_title"
+                style="@style/details_title"
+                android:text="@string/details_trailers_title" />
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    style="@style/details_reviews_trailers_list"
-                    android:id="@+id/details_trailers"></LinearLayout>
-            </TableRow>
-
+            <LinearLayout
+                android:id="@+id/details_trailers_linear_layout"
+                style="@style/details_reviews_trailers_list"
+                android:orientation="vertical" />
             <!-- Reviews -->
-            <TableRow
-                style="@style/details_table_row"
-                android:id="@+id/details_table_row_6">
-                <View
-                    android:id="@+id/detail_separating_line_reviews"
-                    style="@style/horizontal_line" />
-            </TableRow>
-            <TableRow
-                style="@style/details_table_row"
-                android:id="@+id/details_table_row_7">
-                <TextView
-                    style="@style/details_title"
-                    android:text="@string/details_reviews_title"
-                    android:id="@+id/details_reviews_title" />
-            </TableRow>
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/details_table_row"
-                android:id="@+id/details_table_row_8">
+            <View
+                android:id="@+id/detail_separating_line_reviews"
+                style="@style/horizontal_line" />
 
-                <LinearLayout
-                    style="@style/details_reviews_trailers_list"
-                    android:id="@+id/details_reviews"
-                    android:orientation="vertical" />
-            </TableRow>
+            <TextView
+                android:id="@+id/details_reviews_title"
+                style="@style/details_title"
+                android:text="@string/details_reviews_title" />
 
-        </TableLayout>
+            <LinearLayout
+                android:id="@+id/details_reviews_linear_layout"
+                style="@style/details_reviews_trailers_list"
+                android:orientation="vertical" />
+        </LinearLayout>
+
     </ScrollView>
-
-
-
 
 </LinearLayout>

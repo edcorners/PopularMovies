@@ -33,11 +33,6 @@
         <item name="android:layout_margin">20dp</item>
     </style>
 
-    <style name="details_table_row">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
-
     <style name="details_reviews_trailers_list">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

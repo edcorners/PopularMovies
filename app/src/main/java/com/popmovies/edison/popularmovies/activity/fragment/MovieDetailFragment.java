@@ -47,10 +47,10 @@ public class MovieDetailFragment extends Fragment
 
     private final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
 
-    @Bind(R.id.details_trailers)
+    @Bind(R.id.details_trailers_linear_layout)
     LinearLayout trailersLinearLayout;
 
-    @Bind(R.id.details_reviews)
+    @Bind(R.id.details_reviews_linear_layout)
     LinearLayout reviewsLinearLayout;
 
     @Bind(R.id.details_movie_title)
