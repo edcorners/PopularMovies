@@ -2,17 +2,15 @@ package com.popmovies.edison.popularmovies.model.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
-import com.popmovies.edison.popularmovies.activity.MovieDetailActivity;
 import com.popmovies.edison.popularmovies.R;
+import com.popmovies.edison.popularmovies.activity.MovieDetailActivity;
 import com.popmovies.edison.popularmovies.model.Movie;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -22,9 +20,10 @@ import butterknife.ButterKnife;
 /**
  * Created by Edison on 12/18/2015.
  */
-public class MoviesArrayAdapter extends ArrayAdapter<Movie> {
+class MoviesArrayAdapter extends ArrayAdapter<Movie> {
 
-    @Bind(R.id.movie_poster_image_view) ImageView movieImageView;
+    @Bind(R.id.movie_poster_image_view)
+    ImageView movieImageView;
 
     public MoviesArrayAdapter(Context context, List<Movie> movies) {
         super(context, 0, movies);

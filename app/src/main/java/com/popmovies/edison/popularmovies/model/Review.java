@@ -6,11 +6,9 @@ import android.widget.TextView;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.popmovies.edison.popularmovies.data.ReviewColumns;
-import com.popmovies.edison.popularmovies.data.TrailerColumns;
 
 /**
  * Created by Edison on 1/14/2016.
- * @Generated("org.jsonschema2pojo")
  */
 public class Review {
 

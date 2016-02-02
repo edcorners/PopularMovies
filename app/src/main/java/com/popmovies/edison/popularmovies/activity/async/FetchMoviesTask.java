@@ -36,13 +36,14 @@ import retrofit.Retrofit;
 /**
  * Created by Edison on 12/30/2015.
  */
+@SuppressWarnings("UnusedAssignment")
 public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
 
-    public static final int UPDATE_FREQ_IN_MILLIS = 120000; // 2 minutes 10800000; 3 hours
+    private static final int UPDATE_FREQ_IN_MILLIS = 120000; // 2 minutes 10800000; 3 hours
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
-    private FetchMoviesTaskListener<Void> listener;
+    private final FetchMoviesTaskListener<Void> listener;
     private Context context;
-    boolean updated = false;
+    private boolean updated = false;
 
     public FetchMoviesTask(Context context, FetchMoviesTaskListener<Void> listener) {
         this.context = context;
@@ -53,10 +54,9 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         String sortBy = Utility.getPreferredSortOrder(context);
         String voteCountGte = "0";
-        List<Movie> movies = null;
 
         if (isUpdateTime()) {
-            PagedMovieList pagedMovieList = new PagedMovieList();
+
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(TMDBAPI.BASE_URL.getValue())
                     .addConverterFactory(GsonConverterFactory.create())
@@ -71,7 +71,7 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
             try {
                 Response<PagedMovieList> response = moviesCall.execute();
                 Log.v(LOG_TAG, response.raw().toString());
-                pagedMovieList = response.body();
+                PagedMovieList pagedMovieList = response.body();
 
                 updateDatabase(sortBy, pagedMovieList);
                 this.updated = true;
@@ -83,11 +83,10 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void updateDatabase(String sortBy, PagedMovieList pagedMovieList) {
-        int deletedSortingAttributes = context.getContentResolver().delete(PopMoviesProvider.SortingAttributes.withPreferenceCategory(sortBy), null, null);
+        context.getContentResolver().delete(PopMoviesProvider.SortingAttributes.withPreferenceCategory(sortBy), null, null);
 
         ArrayList<ContentProviderOperation> batchUpserts = new ArrayList<>();
 
-        ContentProviderOperation.Builder builder;
         batchUpserts.addAll(createMovieUpsertOperations(pagedMovieList));
         batchUpserts.addAll(createSortingAttributeInserts(sortBy, pagedMovieList));
         batchUpserts.add(createUpdateLogUpsertOperation(sortBy));
@@ -109,7 +108,7 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
     }
 
     private ArrayList<ContentProviderOperation> createSortingAttributeInserts(String sortBy, PagedMovieList pagedMovieList) {
-        ArrayList<ContentProviderOperation> batchInserts = new ArrayList<ContentProviderOperation>();
+        ArrayList<ContentProviderOperation> batchInserts = new ArrayList<>();
         ContentProviderOperation.Builder builder;
         for (ContentValues contentValues : pagedMovieList.toSortingAttributesContentValues(sortBy)) {
             builder = ContentProviderOperation.newInsert(PopMoviesProvider.SortingAttributes.CONTENT_URI).withValues(contentValues);
@@ -119,7 +118,7 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
     }
 
     private ArrayList<ContentProviderOperation> createMovieUpsertOperations(PagedMovieList pagedMovieList) {
-        ArrayList<ContentProviderOperation> batchUpserts = new ArrayList<ContentProviderOperation>();
+        ArrayList<ContentProviderOperation> batchUpserts = new ArrayList<>();
         ContentProviderOperation.Builder builder;
         for (ContentValues contentValues : pagedMovieList.toMovieContentValues()) {
             long movieId = (long) contentValues.get(MovieColumns.MOVIE_ID);
@@ -131,18 +130,20 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
     }
 
     private ContentProviderOperation.Builder createUpsertOperation(Uri uri, ContentValues contentValues){
-        ContentProviderOperation.Builder builder;
+        ContentProviderOperation.Builder builder = null;
         Cursor cursor = context.getContentResolver().query(uri,
                 null,
                 null,
                 null,
                 null);
-        if(cursor.getCount() > 0){
-            builder = ContentProviderOperation.newUpdate(uri).withValues(contentValues);
-        }else {
-            builder = ContentProviderOperation.newInsert(uri).withValues(contentValues);
+        if(cursor != null) {
+            if (cursor.getCount() > 0) {
+                builder = ContentProviderOperation.newUpdate(uri).withValues(contentValues);
+            } else {
+                builder = ContentProviderOperation.newInsert(uri).withValues(contentValues);
+            }
+            cursor.close();
         }
-        cursor.close();
         return builder;
     }
 
@@ -151,24 +152,25 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
 
         String preferredSort = Utility.getPreferredSortOrder(context);
         Cursor cursor = context.getContentResolver().query(PopMoviesProvider.UpdateLogs.withSortingAttribute(preferredSort), null, null, null, null);
-        cursor.moveToFirst();
-        if (cursor.getCount() > 0) {
-            int indexForDate = cursor.getColumnIndex(UpdateLogColumns.LAST_UPDATE);
-            Date lastUpdate = null;
-            try {
-                lastUpdate = Utility.dateTimeFormat.parse(cursor.getString(indexForDate));
-                long lastUpdateMillis = lastUpdate.getTime();
-                long currentTimeMillis = Calendar.getInstance().getTimeInMillis();
-                updateTime = currentTimeMillis - lastUpdateMillis >= UPDATE_FREQ_IN_MILLIS;
-                Log.v(LOG_TAG, "Last Update: "+ Utility.dateTimeFormat.format(lastUpdate) + " in millis: "+lastUpdateMillis);
-                Log.v(LOG_TAG, "Actual Time: "+ Utility.dateTimeFormat.format(Calendar.getInstance().getTime()) + " in millis: "+currentTimeMillis);
-                Log.v(LOG_TAG, "Diff: "+ (currentTimeMillis - lastUpdateMillis));
-            } catch (ParseException e) {
-                Log.e(LOG_TAG, "Error verifying last update time", e);
-            }
+        if(cursor != null) {
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                int indexForDate = cursor.getColumnIndex(UpdateLogColumns.LAST_UPDATE);
+                try {
+                    Date lastUpdate = Utility.dateTimeFormat.parse(cursor.getString(indexForDate));
+                    long lastUpdateMillis = lastUpdate.getTime();
+                    long currentTimeMillis = Calendar.getInstance().getTimeInMillis();
+                    updateTime = currentTimeMillis - lastUpdateMillis >= UPDATE_FREQ_IN_MILLIS;
+                    Log.v(LOG_TAG, "Last Update: " + Utility.dateTimeFormat.format(lastUpdate) + " in millis: " + lastUpdateMillis);
+                    Log.v(LOG_TAG, "Actual Time: " + Utility.dateTimeFormat.format(Calendar.getInstance().getTime()) + " in millis: " + currentTimeMillis);
+                    Log.v(LOG_TAG, "Diff: " + (currentTimeMillis - lastUpdateMillis));
+                } catch (ParseException e) {
+                    Log.e(LOG_TAG, "Error verifying last update time", e);
+                }
 
+            }
+            cursor.close();
         }
-        cursor.close();
         return updateTime;
     }
 

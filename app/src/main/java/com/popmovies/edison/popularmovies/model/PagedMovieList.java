@@ -4,7 +4,6 @@ import android.content.ContentValues;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.popmovies.edison.popularmovies.data.ReviewColumns;
 import com.popmovies.edison.popularmovies.data.SortingAttributesColumns;
 
 import java.util.ArrayList;
@@ -20,11 +19,10 @@ public class PagedMovieList {
     private Integer page;
     @SerializedName("results")
     @Expose
-    private List<Movie> movies = new ArrayList<Movie>();
+    private List<Movie> movies = new ArrayList<>();
 
     public Vector<ContentValues> toMovieContentValues() {
-        Vector<ContentValues> contentValuesVector = new Vector<ContentValues>(movies.size());
-        int position = 0;
+        Vector<ContentValues> contentValuesVector = new Vector<>(movies.size());
         for(Movie movie: movies){
             ContentValues movieContentValues = movie.toContentValues();
             contentValuesVector.add(movieContentValues);
@@ -33,7 +31,7 @@ public class PagedMovieList {
     }
 
     public Vector<ContentValues> toSortingAttributesContentValues(String sortPreference) {
-        Vector<ContentValues> contentValuesVector = new Vector<ContentValues>(movies.size());
+        Vector<ContentValues> contentValuesVector = new Vector<>(movies.size());
         int position = 0;
         for(Movie movie: movies){
             ContentValues movieContentValues = new ContentValues();

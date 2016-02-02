@@ -3,11 +3,12 @@ package com.popmovies.edison.popularmovies.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.popmovies.edison.popularmovies.R;
-import com.popmovies.edison.popularmovies.activity.async.FetchReviewsTaskListener;
+import com.popmovies.edison.popularmovies.activity.fragment.MovieDetailFragment;
 
 public class MovieDetailActivity extends AppCompatActivity{
 
@@ -15,8 +16,21 @@ public class MovieDetailActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
+
+        if (savedInstanceState == null) {
+            // Create the detail fragment and add it to the activity
+            // using a fragment transaction.
+
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(getString(R.string.parcelable_movie_key), getIntent().getParcelableExtra(getString(R.string.parcelable_movie_key)));
+
+            MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
+            movieDetailFragment.setArguments(arguments);
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.movie_detail_container, movieDetailFragment)
+                    .commit();
+        }
     }
 
     @Override

@@ -4,7 +4,6 @@ import android.content.ContentValues;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.popmovies.edison.popularmovies.data.MovieColumns;
 import com.popmovies.edison.popularmovies.data.ReviewColumns;
 
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import java.util.Vector;
 
 /**
  * Created by Edison on 1/14/2016.
- * @Generated("org.jsonschema2pojo")
  */
 public class PagedReviewList {
 
@@ -25,7 +23,7 @@ public class PagedReviewList {
     private Integer page;
     @SerializedName("results")
     @Expose
-    private List<Review> reviews = new ArrayList<Review>();
+    private List<Review> reviews = new ArrayList<>();
     @SerializedName("total_pages")
     @Expose
     private Integer totalPages;
@@ -34,7 +32,7 @@ public class PagedReviewList {
     private Integer totalResults;
 
     public Vector<ContentValues> toContentValues() {
-        Vector<ContentValues> contentValuesVector = new Vector<ContentValues>(reviews.size());
+        Vector<ContentValues> contentValuesVector = new Vector<>(reviews.size());
         for(Review review: reviews){
             ContentValues reviewContentValues = review.toContentValues();
             reviewContentValues.put(ReviewColumns.MOVIE_ID, id);

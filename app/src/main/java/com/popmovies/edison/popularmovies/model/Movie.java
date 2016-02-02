@@ -186,8 +186,8 @@ public class Movie implements Parcelable {
         return movieOverview;
     }
 
-    public TextView setRating(TextView movieRating) {
-        movieRating.setText(this.rating + RATING_SCALE);
+    public TextView setRating(Context context, TextView movieRating) {
+        movieRating.setText(Utility.formatRating(context, this.rating));
         return movieRating;
     }
 

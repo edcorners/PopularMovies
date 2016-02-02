@@ -12,7 +12,6 @@ import java.util.Vector;
 
 /**
  * Created by Edison on 1/14/2016.
- * @Generated("org.jsonschema2pojo")
  */
 public class PagedTrailerList {
     @SerializedName("id")
@@ -20,10 +19,10 @@ public class PagedTrailerList {
     private Integer id;
     @SerializedName("results")
     @Expose
-    private List<Trailer> trailers = new ArrayList<Trailer>();
+    private List<Trailer> trailers = new ArrayList<>();
 
     public Vector<ContentValues> toContentValues() {
-        Vector<ContentValues> contentValuesVector = new Vector<ContentValues>(trailers.size());
+        Vector<ContentValues> contentValuesVector = new Vector<>(trailers.size());
         for(Trailer trailer: trailers){
             ContentValues trailerContentValues = trailer.toContentValues();
             trailerContentValues.put(TrailerColumns.MOVIE_ID, id);

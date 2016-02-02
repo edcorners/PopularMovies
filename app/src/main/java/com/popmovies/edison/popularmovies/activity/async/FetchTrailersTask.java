@@ -1,17 +1,14 @@
 package com.popmovies.edison.popularmovies.activity.async;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.popmovies.edison.popularmovies.BuildConfig;
 import com.popmovies.edison.popularmovies.model.PagedTrailerList;
 import com.popmovies.edison.popularmovies.model.TMDBAPI;
-import com.popmovies.edison.popularmovies.model.Trailer;
 import com.popmovies.edison.popularmovies.service.TMDBService;
 
 import java.io.IOException;
-import java.util.List;
 
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
@@ -25,10 +22,8 @@ public class FetchTrailersTask extends AsyncTask<String, Void, PagedTrailerList>
 
     private final String LOG_TAG = FetchTrailersTask.class.getSimpleName();
     private FetchTrailersTaskListener<PagedTrailerList> listener;
-    private Context context;
 
-    public FetchTrailersTask(Context context, FetchTrailersTaskListener<PagedTrailerList> listener){
-        this.context = context;
+    public FetchTrailersTask(FetchTrailersTaskListener<PagedTrailerList> listener){
         this.listener = listener;
     }
 

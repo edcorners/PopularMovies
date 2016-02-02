@@ -10,11 +10,10 @@ import com.popmovies.edison.popularmovies.data.TrailerColumns;
 
 /**
  * Created by Edison on 1/14/2016.
- * @Generated("org.jsonschema2pojo")
  */
 public class Trailer {
 
-    public static final String YOUTUBE_VIDEO_BASE_URI = "http://www.youtube.com/watch?v=";
+    private static final String YOUTUBE_VIDEO_BASE_URI = "http://www.youtube.com/watch?v=";
 
     @SerializedName("id")
     @Expose

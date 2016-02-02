@@ -1,7 +1,6 @@
 package com.popmovies.edison.popularmovies.activity.fragment;
 
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,13 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListView;
 
 import com.popmovies.edison.popularmovies.R;
 import com.popmovies.edison.popularmovies.Utility;
-import com.popmovies.edison.popularmovies.activity.MovieDetailActivity;
 import com.popmovies.edison.popularmovies.activity.async.FetchMoviesTask;
 import com.popmovies.edison.popularmovies.activity.async.FetchMoviesTaskListener;
-import com.popmovies.edison.popularmovies.data.PopMoviesDatabase;
 import com.popmovies.edison.popularmovies.data.PopMoviesProvider;
 import com.popmovies.edison.popularmovies.model.Movie;
 import com.popmovies.edison.popularmovies.model.adapter.MovieCursorAdapter;
@@ -32,12 +30,27 @@ import butterknife.ButterKnife;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,FetchMoviesTaskListener<Void> {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FetchMoviesTaskListener<Void> {
 
     private static final int MOVIES_LOADER = 0;
-    protected MovieCursorAdapter moviesCursorAdapter;
+    private static final String SELECTED_MOVIE_KEY = "selected_movie_index";
+    private MovieCursorAdapter moviesCursorAdapter;
     private ArrayList<Movie> movieList;
-    @Bind(R.id.movies_grid_view) GridView gridView;
+    @Bind(R.id.movies_grid_view)
+    GridView moviesGridView;
+    private int selectedMovieIndex;
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when a movie has been selected.
+         */
+        public void onItemSelected(Movie movie);
+    }
 
     public MainActivityFragment() {
     }
@@ -52,6 +65,13 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        // When tablets rotate, the currently selected list item needs to be saved.
+        // When no item is selected, selectedMovieIndex will be set to GridView.INVALID_POSITION,
+        // so check for that before storing.
+        if (selectedMovieIndex != GridView.INVALID_POSITION) {
+            outState.putInt(SELECTED_MOVIE_KEY, selectedMovieIndex);
+        }
+
         outState.putParcelableArrayList("movies", movieList);
         super.onSaveInstanceState(outState);
     }
@@ -63,24 +83,26 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         ButterKnife.bind(this,rootView);
         moviesCursorAdapter = new MovieCursorAdapter(getContext(), null, 0);
 
-        gridView.setAdapter(moviesCursorAdapter);
-        /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        moviesGridView.setAdapter(moviesCursorAdapter);
+        moviesGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-                Intent detailsIntent = new Intent(getActivity(), MovieDetailActivity.class);
-                detailsIntent.putExtra(getString(R.string.parcelable_movie_key), new Movie(cursor));
-                startActivity(detailsIntent);
+                ((Callback) getActivity()).onItemSelected(new Movie(cursor));
+                selectedMovieIndex = position;
             }
-        });*/
+        });
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_MOVIE_KEY)) {
+            selectedMovieIndex = savedInstanceState.getInt(SELECTED_MOVIE_KEY);
+        }
         return rootView;
     }
 
     private boolean restoreState(Bundle savedInstanceState) {
         boolean restored = true;
         if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-            movieList = new ArrayList<Movie>();
+            movieList = new ArrayList<>();
             restored = false;
         } else {
             movieList = savedInstanceState.getParcelableArrayList("movies");
@@ -114,6 +136,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         moviesCursorAdapter.swapCursor(data);
+        if (selectedMovieIndex != GridView.INVALID_POSITION) {
+            moviesGridView.smoothScrollToPosition(selectedMovieIndex);
+        }
     }
 
     @Override
@@ -126,4 +151,5 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         getLoaderManager().initLoader(MOVIES_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
+
 }

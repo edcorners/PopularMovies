@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="logo">@drawable/ic_popcorn_icon</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -27,7 +28,7 @@
     </style>
 
     <style name="details_movie_property_element">
-        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_margin">20dp</item>
@@ -37,16 +38,12 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_margin">15dp</item>
-        <item name="android:layout_span">2</item>
-        <item name="android:layout_weight">1</item>
     </style>
 
     <style name="horizontal_line">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">2dp</item>
         <item name="android:background">#c0c0c0</item>
-        <item name="android:layout_span">2</item>
-        <item name="android:layout_weight">1</item>
         <item name="android:layout_marginLeft">15dp</item>
         <item name="android:layout_marginRight">15dp</item>
     </style>
@@ -57,5 +54,11 @@
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
         <item name="android:layout_marginTop">15dp</item>
         <item name="android:layout_marginLeft">15dp</item>
+    </style>
+
+    <style name="movie_poster_on_grid">
+        <item name="android:choiceMode">singleChoice</item>
+        <item name="android:drawSelectorOnTop">true</item>
+        <item name="android:listSelector">@drawable/movie_selector</item>
     </style>
 </resources>

@@ -5,6 +5,7 @@
     tools:context=".activity.fragment.MainActivityFragment"
     tools:showIn="@layout/activity_main"
     android:numColumns="auto_fit"
-    android:id="@+id/movies_grid_view">
+    android:id="@+id/movies_grid_view"
+    style="@style/movie_poster_on_grid">
 
 </GridView>

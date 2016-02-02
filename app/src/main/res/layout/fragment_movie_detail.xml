@@ -41,7 +41,8 @@
                 <ImageView
                     android:id="@+id/details_movie_poster"
                     style="@style/details_movie_property_element"
-                    android:adjustViewBounds="true" />
+                    android:adjustViewBounds="true"
+                    android:contentDescription="Movie poster" />
                 <!--Info-->
                 <LinearLayout
                     android:id="@+id/details_movie_attributes"

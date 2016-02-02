@@ -5,5 +5,5 @@ package com.popmovies.edison.popularmovies.activity.async;
  */
 public interface FetchTrailersTaskListener<T> {
 
-    public void onFetchTrailersTaskComplete(T result);
+    void onFetchTrailersTaskComplete(T result);
 }

@@ -86,16 +86,19 @@ public class MovieDetailFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
-        Intent caller = getActivity().getIntent();
-        movie = (Movie) caller.getParcelableExtra(getString(R.string.parcelable_movie_key));
-
         ButterKnife.bind(this, rootView);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            movie = arguments.getParcelable(getString(R.string.parcelable_movie_key));
+            setMovieDetails(movie);
+            loadMovieTrailers(movie);
+            loadMovieReviews(movie);
+        }
 
-        setMovieDetails(movie);
-        loadMovieTrailers(movie);
-        loadMovieReviews(movie);
-
+        //Intent caller = getActivity().getIntent();
+        //movie = caller.getParcelableExtra(getString(R.string.parcelable_movie_key));
         return rootView;
     }
 
@@ -105,28 +108,31 @@ public class MovieDetailFragment extends Fragment
         titleFrame.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
         movie.setPoster(getContext(), moviePoster);
         movie.setOverview(movieOverview);
-        movie.setRating(movieRating);
+        movie.setRating(getContext(), movieRating);
         movie.setReleaseDate(movieReleaseDate);
         updateFavoriteButtonState(movie);
     }
 
     private void updateFavoriteButtonState(Movie movie) {
         Cursor movieCursor = getContext().getContentResolver().query(PopMoviesProvider.Movies.withMovieId(movie.getId()), null, null, null, null);
-        movieCursor.moveToFirst();
-        if (movieCursor.getCount() > 0) {
-            favoriteToggleButton.setChecked(true);
-        } else {
-            favoriteToggleButton.setChecked(false);
+        if(movieCursor != null) {
+            movieCursor.moveToFirst();
+            if (movieCursor.getCount() > 0) {
+                favoriteToggleButton.setChecked(true);
+            } else {
+                favoriteToggleButton.setChecked(false);
+            }
+            movieCursor.close();
         }
     }
 
     private void loadMovieReviews(Movie movie) {
-        FetchReviewsTask fetchReviewsTask = new FetchReviewsTask(getContext(), this);
+        FetchReviewsTask fetchReviewsTask = new FetchReviewsTask(this);
         fetchReviewsTask.execute(String.valueOf(movie.getId()));
     }
 
     private void loadMovieTrailers(Movie movie) {
-        FetchTrailersTask fetchTrailersTask = new FetchTrailersTask(getContext(), this);
+        FetchTrailersTask fetchTrailersTask = new FetchTrailersTask(this);
         fetchTrailersTask.execute(String.valueOf(movie.getId()));
     }
 

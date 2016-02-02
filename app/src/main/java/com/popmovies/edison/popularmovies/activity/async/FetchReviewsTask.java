@@ -1,17 +1,12 @@
 package com.popmovies.edison.popularmovies.activity.async;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.popmovies.edison.popularmovies.BuildConfig;
 import com.popmovies.edison.popularmovies.model.PagedReviewList;
-import com.popmovies.edison.popularmovies.model.Review;
 import com.popmovies.edison.popularmovies.model.TMDBAPI;
 import com.popmovies.edison.popularmovies.service.TMDBService;
-
-import java.io.IOException;
-import java.util.List;
 
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
@@ -24,11 +19,9 @@ import retrofit.Retrofit;
 public class FetchReviewsTask extends AsyncTask<String, Void, PagedReviewList> {
 
     private final String LOG_TAG = FetchReviewsTask.class.getSimpleName();
-    private FetchReviewsTaskListener<PagedReviewList> listener;
-    private Context context;
+    private final FetchReviewsTaskListener<PagedReviewList> listener;
 
-    public FetchReviewsTask(Context context, FetchReviewsTaskListener<PagedReviewList> listener){
-        this.context = context;
+    public FetchReviewsTask(FetchReviewsTaskListener<PagedReviewList> listener){
         this.listener = listener;
     }
 

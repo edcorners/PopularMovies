@@ -19,9 +19,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Utility {
 
@@ -32,19 +30,17 @@ public class Utility {
     public static String getPreferredSortOrder(Context context) {
         SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(context);
-        String sortBy = sharedPrefs.getString(
+        return sharedPrefs.getString(
                 context.getString(R.string.pref_sort_order_key),
                 context.getString(R.string.pref_sort_by_popularity));
-        return sortBy;
     }
 
     public static String getPreferredVoteCount(Context context) {
         SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(context);
-        String voteCount = sharedPrefs.getString(
+        return sharedPrefs.getString(
                 context.getString(R.string.pref_vote_count_key),
                 context.getString(R.string.pref_1000_votes));
-        return voteCount;
     }
 
     public static boolean isFavoritesSort(Context context) {
@@ -56,4 +52,7 @@ public class Utility {
         return sortBy.equals(context.getString(R.string.pref_sort_by_favorites));
     }
 
+    public static String formatRating(Context context, double rating){
+        return String.format(context.getString(R.string.format_rating), rating);
+    }
 }

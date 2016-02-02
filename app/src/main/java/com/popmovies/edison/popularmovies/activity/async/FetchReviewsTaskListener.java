@@ -5,5 +5,5 @@ package com.popmovies.edison.popularmovies.activity.async;
  */
 public interface FetchReviewsTaskListener<T> {
 
-    public void onFetchReviewsTaskComplete(T result);
+    void onFetchReviewsTaskComplete(T result);
 }
