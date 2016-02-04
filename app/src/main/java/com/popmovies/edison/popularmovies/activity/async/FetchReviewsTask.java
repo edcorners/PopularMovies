@@ -6,7 +6,7 @@ import android.util.Log;
 import com.popmovies.edison.popularmovies.BuildConfig;
 import com.popmovies.edison.popularmovies.model.PagedReviewList;
 import com.popmovies.edison.popularmovies.model.TMDBAPI;
-import com.popmovies.edison.popularmovies.service.TMDBService;
+import com.popmovies.edison.popularmovies.webservice.TMDBWebService;
 
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
@@ -34,7 +34,7 @@ public class FetchReviewsTask extends AsyncTask<String, Void, PagedReviewList> {
                 .baseUrl(TMDBAPI.BASE_URL.getValue())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        TMDBService service = retrofit.create(TMDBService.class);
+        TMDBWebService service = retrofit.create(TMDBWebService.class);
 
         Call<PagedReviewList> reviewsCall = service.getReviews(movieId, BuildConfig.TMDB_API_KEY);
 

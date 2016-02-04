@@ -16,17 +16,15 @@ import com.popmovies.edison.popularmovies.Utility;
 import com.popmovies.edison.popularmovies.data.MovieColumns;
 import com.popmovies.edison.popularmovies.data.PopMoviesProvider;
 import com.popmovies.edison.popularmovies.data.UpdateLogColumns;
-import com.popmovies.edison.popularmovies.model.Movie;
 import com.popmovies.edison.popularmovies.model.PagedMovieList;
 import com.popmovies.edison.popularmovies.model.TMDBAPI;
-import com.popmovies.edison.popularmovies.service.TMDBService;
+import com.popmovies.edison.popularmovies.webservice.TMDBWebService;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
@@ -36,7 +34,7 @@ import retrofit.Retrofit;
 /**
  * Created by Edison on 12/30/2015.
  */
-@SuppressWarnings("UnusedAssignment")
+
 public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
 
     private static final int UPDATE_FREQ_IN_MILLIS = 120000; // 2 minutes 10800000; 3 hours
@@ -52,6 +50,7 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
+        Log.v(LOG_TAG, "FetchMoviesTask started");
         String sortBy = Utility.getPreferredSortOrder(context);
         String voteCountGte = "0";
 
@@ -61,7 +60,7 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
                     .baseUrl(TMDBAPI.BASE_URL.getValue())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
-            TMDBService service = retrofit.create(TMDBService.class);
+            TMDBWebService service = retrofit.create(TMDBWebService.class);
 
             if (sortBy.equalsIgnoreCase(context.getString(R.string.pref_sort_by_rating))) {
                 voteCountGte = Utility.getPreferredVoteCount(context);

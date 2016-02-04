@@ -3,6 +3,7 @@ package com.popmovies.edison.popularmovies.model.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import butterknife.ButterKnife;
  */
 public class MovieCursorAdapter extends CursorAdapter {
 
+    private final String LOG_TAG = MovieCursorAdapter.class.getSimpleName();
     public static class ViewHolder {
         @Bind(R.id.movie_poster_image_view)
         public ImageView movieImageView;
@@ -37,7 +39,7 @@ public class MovieCursorAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-
+        Log.v(LOG_TAG, "new View Called");
         View itemMovie = LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false);
         ViewHolder viewHolder = new ViewHolder(itemMovie);
         itemMovie.setTag(viewHolder);
@@ -46,6 +48,7 @@ public class MovieCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, final Context context, Cursor cursor) {
+        Log.v(LOG_TAG, "bind view Called");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         final Movie movie = new Movie(cursor);
         /*viewHolder.movieImageView.setOnClickListener(new View.OnClickListener() {

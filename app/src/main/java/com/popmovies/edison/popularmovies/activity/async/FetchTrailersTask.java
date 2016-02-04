@@ -6,7 +6,7 @@ import android.util.Log;
 import com.popmovies.edison.popularmovies.BuildConfig;
 import com.popmovies.edison.popularmovies.model.PagedTrailerList;
 import com.popmovies.edison.popularmovies.model.TMDBAPI;
-import com.popmovies.edison.popularmovies.service.TMDBService;
+import com.popmovies.edison.popularmovies.webservice.TMDBWebService;
 
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ public class FetchTrailersTask extends AsyncTask<String, Void, PagedTrailerList>
                 .baseUrl(TMDBAPI.BASE_URL.getValue())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        TMDBService service = retrofit.create(TMDBService.class);
+        TMDBWebService service = retrofit.create(TMDBWebService.class);
 
         Call<PagedTrailerList> videosCall = service.getVideos(movieId, BuildConfig.TMDB_API_KEY);
 

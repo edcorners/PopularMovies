@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import butterknife.ButterKnife;
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FetchMoviesTaskListener<Void> {
 
+    public final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     private static final int MOVIES_LOADER = 0;
     private static final String SELECTED_MOVIE_KEY = "selected_movie_index";
     private MovieCursorAdapter moviesCursorAdapter;
@@ -59,7 +61,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (!restoreState(savedInstanceState)) {
-            fetchMovieList();
+            //fetchMovieList();
         }
     }
 
@@ -135,6 +137,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.v(LOG_TAG, "Load finished");
         moviesCursorAdapter.swapCursor(data);
         if (selectedMovieIndex != GridView.INVALID_POSITION) {
             moviesGridView.smoothScrollToPosition(selectedMovieIndex);
@@ -149,6 +152,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(MOVIES_LOADER, null, this);
+        Log.v(LOG_TAG, "Loader initialized");
         super.onActivityCreated(savedInstanceState);
     }
 

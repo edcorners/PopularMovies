@@ -1,7 +1,6 @@
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">Popular Movies</string>
 
-
     <!-- Strings related to Settings -->
     <string name="action_settings">Settings</string>
     <!-- General settings -->
@@ -37,4 +36,6 @@
     <!-- Rating format -->
     <string name="format_rating"><xliff:g id="rating">%1$.2f</xliff:g> /10</string>
 
+    <string name="sync_account_type">edison.popmovies.com</string>
+    <string name="content_authority">com.popmovies.edison.popularmovies</string>
 </resources>

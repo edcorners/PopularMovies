@@ -3,6 +3,12 @@
     package="com.popmovies.edison.popularmovies">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission
+        android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <application
         android:allowBackup="true"
@@ -39,9 +45,30 @@
         </activity>
 
         <provider
-            android:authorities="com.popmovies.edison.popularmovies.data.PopMoviesProvider"
+            android:authorities="com.popmovies.edison.popularmovies"
             android:name="com.popmovies.edison.popularmovies.data.generated.PopMoviesProvider"
-            android:exported="false"/>
+            android:exported="false"
+            android:syncable="true"/>
+
+        <service
+            android:name="com.popmovies.edison.popularmovies.sync.PopMoviesAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <service
+            android:name="com.popmovies.edison.popularmovies.sync.PopMoviesSyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
     </application>
 
 </manifest>

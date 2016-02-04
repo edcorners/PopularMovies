@@ -15,6 +15,7 @@ import com.popmovies.edison.popularmovies.R;
 import com.popmovies.edison.popularmovies.activity.fragment.MainActivityFragment;
 import com.popmovies.edison.popularmovies.activity.fragment.MovieDetailFragment;
 import com.popmovies.edison.popularmovies.model.Movie;
+import com.popmovies.edison.popularmovies.sync.PopMoviesSyncAdapter;
 import com.squareup.okhttp.OkHttpClient;
 
 import butterknife.Bind;
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         }else{
             twoPane = false;
         }
+
+        PopMoviesSyncAdapter.initializeSyncAdapter(this);
 
         Stetho.initialize(
                 Stetho.newInitializerBuilder(this)
