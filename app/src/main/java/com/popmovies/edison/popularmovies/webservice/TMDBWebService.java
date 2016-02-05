@@ -18,9 +18,9 @@ public interface TMDBWebService {
     Call<PagedMovieList> getMoviesSortedBy(@Query("sort_by") String sortBy, @Query("vote_count.gte") String voteCount, @Query("api_key") String apiKey);
 
     @GET("3/movie/{id}/videos")
-    Call<PagedTrailerList> getVideos(@Path("id") int movieId, @Query("api_key") String apiKey);
+    Call<PagedTrailerList> getVideos(@Path("id") long movieId, @Query("api_key") String apiKey);
 
     @GET("3/movie/{id}/reviews")
-    Call<PagedReviewList> getReviews(@Path("id") int movieId, @Query("api_key") String apiKey);
+    Call<PagedReviewList> getReviews(@Path("id") long movieId, @Query("api_key") String apiKey);
 
 }

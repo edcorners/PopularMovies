@@ -52,6 +52,10 @@ public class Movie implements Parcelable {
     @Expose
     private String releaseDateString;
 
+    private PagedReviewList reviewList;
+
+    private PagedTrailerList trailerList;
+
     // Constructors
 
     public Movie(long id, String title, String posterPath, String overview, double rating, String releaseDate){
@@ -61,6 +65,7 @@ public class Movie implements Parcelable {
         this.overview = overview;
         this.rating = rating;
         this.releaseDateString = releaseDate;
+
     }
 
     private Movie(Parcel in) {
@@ -285,5 +290,21 @@ public class Movie implements Parcelable {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public PagedReviewList getReviewList() {
+        return reviewList;
+    }
+
+    public void setReviewList(PagedReviewList reviewList) {
+        this.reviewList = reviewList;
+    }
+
+    public PagedTrailerList getTrailerList() {
+        return trailerList;
+    }
+
+    public void setTrailerList(PagedTrailerList trailerList) {
+        this.trailerList = trailerList;
     }
 }

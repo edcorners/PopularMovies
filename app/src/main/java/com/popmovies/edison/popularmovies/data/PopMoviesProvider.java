@@ -77,6 +77,17 @@ public class PopMoviesProvider {
         public static Uri withMovieId(long id){
             return buildUri(Path.MOVIES, String.valueOf(id), Path.REVIEW);
         }
+
+        @InexactContentUri(
+                name = "REVIEW_BY_ID",
+                path = Path.REVIEW + "/*",
+                type = "vnd.android.cursor.item/review",
+                whereColumn = ReviewColumns.MOVIE_ID,
+                pathSegment = 1
+        )
+        public static Uri withReviewId(String id){
+            return buildUri(Path.REVIEW, id);
+        }
     }
 
     @TableEndpoint(table = PopMoviesDatabase.TRAILERS) public static class Trailers {
@@ -96,6 +107,17 @@ public class PopMoviesProvider {
         )
         public static Uri withMovieId(long id){
             return buildUri(Path.MOVIES, String.valueOf(id), Path.TRAILER);
+        }
+
+        @InexactContentUri(
+                name = "TRAILER_BY_ID",
+                path = Path.TRAILER + "/#/",
+                type = "vnd.android.cursor.dir/trailer",
+                whereColumn = TrailerColumns.MOVIE_ID,
+                pathSegment = 1
+        )
+        public static Uri withTrailerId(String id){
+            return buildUri(Path.TRAILER, id);
         }
 
     }
