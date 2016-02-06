@@ -60,8 +60,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String sortPref = Utility.getPreferredSortOrder(getContext());
         if (!restoreState(savedInstanceState)) {
-            fetchMovieList();
+            if(sortPref != getString(R.string.pref_sort_by_favorites))
+                fetchMovieList();
         }
     }
 

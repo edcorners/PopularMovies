@@ -2,6 +2,7 @@ package com.popmovies.edison.popularmovies.activity.fragment;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.ToggleButton;
 
 import com.popmovies.edison.popularmovies.R;
 import com.popmovies.edison.popularmovies.activity.async.FetchTrailersAndReviewsTask;
+import com.popmovies.edison.popularmovies.data.PopMoviesDatabaseServices;
 import com.popmovies.edison.popularmovies.data.PopMoviesProvider;
 import com.popmovies.edison.popularmovies.model.Movie;
 import com.popmovies.edison.popularmovies.model.PagedReviewList;
@@ -72,8 +74,7 @@ public class MovieDetailFragment extends Fragment
     @Bind(R.id.details_scroll_view)
     ScrollView detailsScrollView;
     private Movie movie;
-    private PagedReviewList pagedReviewList;
-    private PagedTrailerList pagedTrailerList;
+    private PopMoviesDatabaseServices databaseServices;
 
     public MovieDetailFragment() {
         setHasOptionsMenu(true);
@@ -91,6 +92,7 @@ public class MovieDetailFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, rootView);
         Bundle arguments = getArguments();
+        databaseServices = new PopMoviesDatabaseServices(getContext());
         if (arguments != null) {
             movie = arguments.getParcelable(getString(R.string.parcelable_movie_key));
             setMovieDetails(movie);
@@ -108,20 +110,7 @@ public class MovieDetailFragment extends Fragment
         movie.setOverview(movieOverview);
         movie.setRating(getContext(), movieRating);
         movie.setReleaseDate(movieReleaseDate);
-        updateFavoriteButtonState(movie);
-    }
-
-    private void updateFavoriteButtonState(Movie movie) {
-        Cursor movieCursor = getContext().getContentResolver().query(PopMoviesProvider.Movies.withMovieId(movie.getId()), null, null, null, null);
-        if(movieCursor != null) {
-            movieCursor.moveToFirst();
-            if (movieCursor.getCount() > 0) {
-                favoriteToggleButton.setChecked(true);
-            } else {
-                favoriteToggleButton.setChecked(false);
-            }
-            movieCursor.close();
-        }
+        favoriteToggleButton.setChecked(databaseServices.isFavorite(movie));
     }
 
     private void loadMovieTrailersAndReviews(Movie movie) {
@@ -135,70 +124,19 @@ public class MovieDetailFragment extends Fragment
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    insertFavoriteMovie();
+                    databaseServices.insertFavorite(movie);
+                    Log.v(LOG_TAG, "Saved as favorite "+movie);
                 }
             }).start();
         } else {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    deleteFavoriteMovie();
+                    databaseServices.deleteFavorite(movie);
+                    Log.v(LOG_TAG, "Deleted from favorites "+movie);
                 }
             }).start();
         }
-    }
-
-    private void deleteFavoriteMovie() {
-        ArrayList<ContentProviderOperation> batchDeletes = getBatchDeletes();
-        try {
-            getActivity().getContentResolver().applyBatch(PopMoviesProvider.AUTHORITY, batchDeletes);
-        } catch (RemoteException | OperationApplicationException e) {
-            Log.e(LOG_TAG, "Error applying batch insert", e);
-        }
-    }
-
-    @NonNull
-    private ArrayList<ContentProviderOperation> getBatchDeletes() {
-        ArrayList<ContentProviderOperation> batchDeletes = new ArrayList<>();
-
-        ContentProviderOperation.Builder builder;
-        builder = ContentProviderOperation.newDelete(PopMoviesProvider.Trailers.withMovieId(movie.getId())); // delete trailers
-        batchDeletes.add(builder.build());
-        builder = ContentProviderOperation.newDelete(PopMoviesProvider.Reviews.withMovieId(movie.getId())); // delete reviews
-        batchDeletes.add(builder.build());
-        builder = ContentProviderOperation.newDelete(PopMoviesProvider.Movies.withMovieId(movie.getId())); // delete movie
-        batchDeletes.add(builder.build());
-        return batchDeletes;
-    }
-
-    private void insertFavoriteMovie() {
-        Log.d(LOG_TAG, "Insert movie, reviews and trailers");
-        ArrayList<ContentProviderOperation> batchInserts = getBatchInserts();
-        try {
-            getActivity().getContentResolver().applyBatch(PopMoviesProvider.AUTHORITY, batchInserts);
-        } catch (RemoteException | OperationApplicationException e) {
-            Log.e(LOG_TAG, "Error applying batch insert", e);
-        }
-    }
-
-    private ArrayList<ContentProviderOperation> getBatchInserts() {
-        ArrayList<ContentProviderOperation> batchInserts = new ArrayList<>();
-
-        ContentProviderOperation.Builder builder;
-        builder = ContentProviderOperation.newInsert(PopMoviesProvider.Movies.CONTENT_URI).withValues(movie.toContentValues()); // insert movie
-        batchInserts.add(builder.build());
-
-        for (ContentValues trailerAsCV : pagedTrailerList.toContentValues()) { // insert pagedTrailerList
-            builder = ContentProviderOperation.newInsert(PopMoviesProvider.Trailers.CONTENT_URI).withValues(trailerAsCV);
-            batchInserts.add(builder.build());
-        }
-
-        for (ContentValues reviewAsCV : pagedReviewList.toContentValues()) { // insert pagedReviewList
-            builder = ContentProviderOperation.newInsert(PopMoviesProvider.Reviews.CONTENT_URI).withValues(reviewAsCV);
-            batchInserts.add(builder.build());
-        }
-
-        return batchInserts;
     }
 
     @Override
@@ -246,26 +184,41 @@ public class MovieDetailFragment extends Fragment
             case REVIEWS_LOADER:
                 reviewsLinearLayout.removeAllViews();
                 while(data.moveToNext()){
-                    Review review = new Review(data);
-                    LinearLayout reviewItemLinearLayout = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.item_review, null, false);
-                    TextView reviewContentTextView = (TextView) reviewItemLinearLayout.findViewById(R.id.review_content_text_view);
-                    TextView reviewAuthorTextView = (TextView) reviewItemLinearLayout.findViewById(R.id.review_author_text_view);
-                    review.setContent(reviewContentTextView);
-                    review.setAuthor(reviewAuthorTextView);
-                    reviewsLinearLayout.addView(reviewItemLinearLayout);
+                    buildReviewView(data);
                 }
                 break;
             case TRAILERS_LOADER:
                 trailersLinearLayout.removeAllViews();
                 while(data.moveToNext()){
-                    Trailer trailer = new Trailer(data);
-                    TextView trailerItemTextView = (TextView)LayoutInflater.from(getContext()).inflate(R.layout.item_trailer, null, false);
-                    trailer.setName(trailerItemTextView);
-                    trailersLinearLayout.addView(trailerItemTextView);
+                    buildTrailerView(data);
                 }
                 break;
         }
         data.close();
+    }
+
+    private void buildTrailerView(Cursor data) {
+        final Trailer trailer = new Trailer(data);
+        TextView trailerItemTextView = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.item_trailer, null, false);
+        trailer.setName(trailerItemTextView);
+        trailerItemTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent openVideoIntent = new Intent(Intent.ACTION_VIEW, trailer.getVideoUri());
+                getContext().startActivity(openVideoIntent);
+            }
+        });
+        trailersLinearLayout.addView(trailerItemTextView);
+    }
+
+    private void buildReviewView(Cursor data) {
+        Review review = new Review(data);
+        LinearLayout reviewItemLinearLayout = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.item_review, null, false);
+        TextView reviewContentTextView = (TextView) reviewItemLinearLayout.findViewById(R.id.review_content_text_view);
+        TextView reviewAuthorTextView = (TextView) reviewItemLinearLayout.findViewById(R.id.review_author_text_view);
+        review.setContent(reviewContentTextView);
+        review.setAuthor(reviewAuthorTextView);
+        reviewsLinearLayout.addView(reviewItemLinearLayout);
     }
 
     @Override

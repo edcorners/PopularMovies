@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.popmovies.edison.popularmovies.R;
 import com.popmovies.edison.popularmovies.Utility;
 import com.popmovies.edison.popularmovies.activity.async.FetchMoviesTask;
 import com.popmovies.edison.popularmovies.model.Movie;
@@ -30,9 +31,11 @@ public class PopMoviesDatabaseServices {
     private static final int UPDATE_FREQ_IN_MILLIS = 10800000; //3 hours
     private Context mContext;
     private final String LOG_TAG = PopMoviesDatabaseServices.class.getSimpleName();
+    private String favoritesString;
 
     public PopMoviesDatabaseServices(Context context) {
         this.mContext = context;
+        favoritesString = mContext.getResources().getString(R.string.pref_sort_by_favorites);
     }
 
     public void updateReviewsAndTrailers(PagedReviewList pagedReviewList, PagedTrailerList pagedTrailerList, String updateKey) {
@@ -121,7 +124,6 @@ public class PopMoviesDatabaseServices {
 
     private ContentProviderOperation createUpdateLogUpsertOperation(String sortBy, String itemKey) {
         ContentProviderOperation.Builder builder;
-        Uri upsertUpdateLogUri = PopMoviesProvider.UpdateLogs.withSortingAttribute(sortBy);
         ContentValues updateLogContentValues = new ContentValues();
         updateLogContentValues.put(UpdateLogColumns.ITEM_KEY, itemKey);
         updateLogContentValues.put(UpdateLogColumns.SORTING_ATTRIBUTE, sortBy);
@@ -204,5 +206,44 @@ public class PopMoviesDatabaseServices {
             cursor.close();
         }
         return updateTime;
+    }
+
+    public void insertFavorite(Movie movie){
+        Cursor sequenceCursor = mContext.getContentResolver().query(PopMoviesProvider.SortingAttributes.CONTENT_URI,
+                new String[]{"MAX(" + SortingAttributesColumns.POSITION + ")"},
+                SortingAttributesColumns.PREFERENCE_CATEGORY + " =?",
+                new String[]{favoritesString},
+                null);
+        sequenceCursor.moveToNext();
+        int position = sequenceCursor.getInt(0);
+        sequenceCursor.close();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SortingAttributesColumns.MOVIE_ID, movie.getId());
+        contentValues.put(SortingAttributesColumns.PREFERENCE_CATEGORY, favoritesString);
+        contentValues.put(SortingAttributesColumns.POSITION, position+1);
+        mContext.getContentResolver().insert(PopMoviesProvider.SortingAttributes.CONTENT_URI,contentValues);
+    }
+
+    public void deleteFavorite(Movie movie){
+
+        String where = SortingAttributesColumns.MOVIE_ID + " =? AND " + SortingAttributesColumns.PREFERENCE_CATEGORY + " =?";
+        String[] selectionArgs = {String.valueOf(movie.getId()), favoritesString};
+        mContext.getContentResolver().delete(PopMoviesProvider.SortingAttributes.CONTENT_URI,
+                where,
+                selectionArgs);
+    }
+
+    public boolean isFavorite(Movie movie) {
+        String selection = SortingAttributesColumns.PREFERENCE_CATEGORY+ " =? AND " + SortingAttributesColumns.MOVIE_ID + " =?";
+        String[] selectionArgs = {favoritesString, String.valueOf(movie.getId())};
+        Cursor cursor = mContext.getContentResolver().query(PopMoviesProvider.SortingAttributes.CONTENT_URI,
+                null,
+                selection,
+                selectionArgs,
+                null);
+        cursor.moveToNext();
+        boolean recordExists = cursor.getCount() > 0;
+        cursor.close();
+        return recordExists;
     }
 }
