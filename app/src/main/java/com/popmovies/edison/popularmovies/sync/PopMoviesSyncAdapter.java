@@ -29,14 +29,11 @@ import com.popmovies.edison.popularmovies.model.Movie;
 import com.popmovies.edison.popularmovies.model.PagedMovieList;
 import com.popmovies.edison.popularmovies.model.PagedReviewList;
 import com.popmovies.edison.popularmovies.model.PagedTrailerList;
-import com.popmovies.edison.popularmovies.model.TMDBAPI;
+import com.popmovies.edison.popularmovies.webservice.TMDBAPI;
 import com.popmovies.edison.popularmovies.webservice.TMDBWebService;
-
-import net.simonvt.schematic.annotation.ContentProvider;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import retrofit.Call;
 import retrofit.GsonConverterFactory;

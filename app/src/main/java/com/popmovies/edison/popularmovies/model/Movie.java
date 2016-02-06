@@ -15,6 +15,7 @@ import com.popmovies.edison.popularmovies.R;
 import com.popmovies.edison.popularmovies.Utility;
 import com.popmovies.edison.popularmovies.data.MovieColumns;
 import com.popmovies.edison.popularmovies.data.PopMoviesDatabase;
+import com.popmovies.edison.popularmovies.webservice.TMDBAPI;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -78,18 +79,18 @@ public class Movie implements Parcelable {
     }
 
     public Movie(Cursor cursor){
-        int index = cursor.getColumnIndex(MovieColumns.MOVIE_ID);
-        this.id = cursor.getLong(index);
-        index = cursor.getColumnIndex(MovieColumns.TITLE);
-        this.title = cursor.getString(index);
-        index = cursor.getColumnIndex(MovieColumns.OVERVIEW);
-        this.overview = cursor.getString(index);
-        index = cursor.getColumnIndex(MovieColumns.POSTER_PATH);
-        this.posterPath = cursor.getString(index);
-        index = cursor.getColumnIndex(MovieColumns.RATING);
-        this.rating = cursor.getDouble(index);
-        index = cursor.getColumnIndex(MovieColumns.RELEASE_DATE);
-        this.releaseDateString = cursor.getString(index);
+        //int index = cursor.getColumnIndex(MovieColumns.MOVIE_ID);
+        this.id = cursor.getLong(MovieColumnProjection.MOVIE_ID.ordinal());
+        //index = cursor.getColumnIndex(MovieColumns.TITLE);
+        this.title = cursor.getString(MovieColumnProjection.TITLE.ordinal());
+        //index = cursor.getColumnIndex(MovieColumns.OVERVIEW);
+        this.overview = cursor.getString(MovieColumnProjection.OVERVIEW.ordinal());
+        //index = cursor.getColumnIndex(MovieColumns.POSTER_PATH);
+        this.posterPath = cursor.getString(MovieColumnProjection.POSTER_PATH.ordinal());
+        //index = cursor.getColumnIndex(MovieColumns.RATING);
+        this.rating = cursor.getDouble(MovieColumnProjection.RATING.ordinal());
+        //index = cursor.getColumnIndex(MovieColumns.RELEASE_DATE);
+        this.releaseDateString = cursor.getString(MovieColumnProjection.RELEASE_DATE.ordinal());
     }
 
     public enum MovieColumnProjection{

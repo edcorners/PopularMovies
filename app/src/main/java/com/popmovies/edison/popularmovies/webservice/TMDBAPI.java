@@ -1,4 +1,4 @@
-package com.popmovies.edison.popularmovies.model;
+package com.popmovies.edison.popularmovies.webservice;
 
 /**
  * Created by Edison on 12/18/2015.

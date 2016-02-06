@@ -82,7 +82,7 @@ public class PopMoviesProvider {
                 name = "REVIEW_BY_ID",
                 path = Path.REVIEW + "/*",
                 type = "vnd.android.cursor.item/review",
-                whereColumn = ReviewColumns.MOVIE_ID,
+                whereColumn = ReviewColumns.REVIEW_ID,
                 pathSegment = 1
         )
         public static Uri withReviewId(String id){
@@ -111,9 +111,9 @@ public class PopMoviesProvider {
 
         @InexactContentUri(
                 name = "TRAILER_BY_ID",
-                path = Path.TRAILER + "/#/",
-                type = "vnd.android.cursor.dir/trailer",
-                whereColumn = TrailerColumns.MOVIE_ID,
+                path = Path.TRAILER + "/*",
+                type = "vnd.android.cursor.item/trailer",
+                whereColumn = TrailerColumns.TRAILER_ID,
                 pathSegment = 1
         )
         public static Uri withTrailerId(String id){

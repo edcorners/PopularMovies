@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             twoPane = false;
         }
 
-        PopMoviesSyncAdapter.initializeSyncAdapter(this);
-
         Stetho.initialize(
                 Stetho.newInitializerBuilder(this)
                         .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))

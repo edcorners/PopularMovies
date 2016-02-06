@@ -16,7 +16,9 @@ public interface UpdateLogColumns {
     String _ID = "_id";
 
     @DataType(DataType.Type.TEXT)
-    @Unique
+    String ITEM_KEY = "item_key";
+
+    @DataType(DataType.Type.TEXT)
     String SORTING_ATTRIBUTE = "sorting_attribute";
 
     @DataType(DataType.Type.TEXT)

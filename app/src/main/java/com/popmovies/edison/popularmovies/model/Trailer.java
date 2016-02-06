@@ -1,12 +1,17 @@
 package com.popmovies.edison.popularmovies.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.widget.TextView;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.popmovies.edison.popularmovies.data.PopMoviesDatabase;
+import com.popmovies.edison.popularmovies.data.ReviewColumns;
 import com.popmovies.edison.popularmovies.data.TrailerColumns;
+
+import java.net.URL;
 
 /**
  * Created by Edison on 1/14/2016.
@@ -28,6 +33,39 @@ public class Trailer {
     @Expose
     private String site;
 
+    public Trailer(Cursor cursor) {
+        id = cursor.getString(TrailerColumnProjection.TRAILER_ID.ordinal());
+        key = cursor.getString(TrailerColumnProjection.KEY.ordinal());
+        name = cursor.getString(TrailerColumnProjection.NAME.ordinal());
+        site = cursor.getString(TrailerColumnProjection.SITE.ordinal());
+    }
+
+    public enum TrailerColumnProjection{
+        _ID(PopMoviesDatabase.TRAILERS+"."+ TrailerColumns._ID),
+        MOVIE_ID(PopMoviesDatabase.TRAILERS+"."+TrailerColumns.MOVIE_ID),
+        TRAILER_ID(PopMoviesDatabase.TRAILERS+"."+TrailerColumns.TRAILER_ID),
+        KEY(PopMoviesDatabase.TRAILERS+"."+TrailerColumns.KEY),
+        NAME(PopMoviesDatabase.TRAILERS+"."+TrailerColumns.NAME),
+        SITE(PopMoviesDatabase.TRAILERS+"."+TrailerColumns.SITE);
+
+        private String columnName;
+
+        TrailerColumnProjection(String columnName) {
+            this.columnName = columnName;
+        }
+
+        public String getColumnName() {
+            return columnName;
+        }
+
+        public void setColumnName(String columnName) {
+            this.columnName = columnName;
+        }
+
+        public static String[] getProjection(){
+            return new String[]{_ID.columnName,MOVIE_ID.columnName,TRAILER_ID.columnName,KEY.columnName, NAME.columnName, SITE.columnName};
+        }
+    }
 
     public TextView setName(TextView trailerTitleTextView) {
         trailerTitleTextView.setText(name);

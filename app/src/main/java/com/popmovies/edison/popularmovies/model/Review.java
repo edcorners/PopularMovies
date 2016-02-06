@@ -1,10 +1,13 @@
 package com.popmovies.edison.popularmovies.model;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.widget.TextView;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.popmovies.edison.popularmovies.data.MovieColumns;
+import com.popmovies.edison.popularmovies.data.PopMoviesDatabase;
 import com.popmovies.edison.popularmovies.data.ReviewColumns;
 
 /**
@@ -25,6 +28,39 @@ public class Review {
     @Expose
     private String url;
 
+    public Review(Cursor cursor) {
+        id = cursor.getString(ReviewColumnProjection.REVIEW_ID.ordinal());
+        author = cursor.getString(ReviewColumnProjection.AUTHOR.ordinal());
+        content = cursor.getString(ReviewColumnProjection.CONTENT.ordinal());
+        url = cursor.getString(ReviewColumnProjection.URL.ordinal());
+    }
+
+    public enum ReviewColumnProjection{
+        _ID(PopMoviesDatabase.REVIEWS+"."+ ReviewColumns._ID),
+        MOVIE_ID(PopMoviesDatabase.REVIEWS+"."+ReviewColumns.MOVIE_ID),
+        REVIEW_ID(PopMoviesDatabase.REVIEWS+"."+ReviewColumns.REVIEW_ID),
+        AUTHOR(PopMoviesDatabase.REVIEWS+"."+ReviewColumns.AUTHOR),
+        CONTENT(PopMoviesDatabase.REVIEWS+"."+ReviewColumns.CONTENT),
+        URL(PopMoviesDatabase.REVIEWS+"."+ReviewColumns.URL);
+
+        private String columnName;
+
+        ReviewColumnProjection(String columnName) {
+            this.columnName = columnName;
+        }
+
+        public String getColumnName() {
+            return columnName;
+        }
+
+        public void setColumnName(String columnName) {
+            this.columnName = columnName;
+        }
+
+        public static String[] getProjection(){
+            return new String[]{_ID.columnName,MOVIE_ID.columnName,REVIEW_ID.columnName,AUTHOR.columnName, CONTENT.columnName, URL.columnName};
+        }
+    }
 
     public TextView setAuthor(TextView reviewAuthorTextView) {
         reviewAuthorTextView.setText(author);

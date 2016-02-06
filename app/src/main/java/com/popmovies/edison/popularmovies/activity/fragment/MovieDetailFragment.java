@@ -2,14 +2,16 @@ package com.popmovies.edison.popularmovies.activity.fragment;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,16 +24,13 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.popmovies.edison.popularmovies.R;
-import com.popmovies.edison.popularmovies.activity.async.FetchReviewsTask;
-import com.popmovies.edison.popularmovies.activity.async.FetchReviewsTaskListener;
-import com.popmovies.edison.popularmovies.activity.async.FetchTrailersTask;
-import com.popmovies.edison.popularmovies.activity.async.FetchTrailersTaskListener;
+import com.popmovies.edison.popularmovies.activity.async.FetchTrailersAndReviewsTask;
 import com.popmovies.edison.popularmovies.data.PopMoviesProvider;
 import com.popmovies.edison.popularmovies.model.Movie;
 import com.popmovies.edison.popularmovies.model.PagedReviewList;
 import com.popmovies.edison.popularmovies.model.PagedTrailerList;
-import com.popmovies.edison.popularmovies.model.adapter.ReviewsArrayAdapter;
-import com.popmovies.edison.popularmovies.model.adapter.TrailersArrayAdapter;
+import com.popmovies.edison.popularmovies.model.Review;
+import com.popmovies.edison.popularmovies.model.Trailer;
 
 import java.util.ArrayList;
 
@@ -43,9 +42,11 @@ import butterknife.OnClick;
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailFragment extends Fragment
-        implements FetchReviewsTaskListener<PagedReviewList>, FetchTrailersTaskListener<PagedTrailerList> {
+        implements FetchTrailersAndReviewsTask.Listener, LoaderManager.LoaderCallbacks<Cursor>{
 
     private final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
+    private static final int REVIEWS_LOADER = 0;
+    private static final int TRAILERS_LOADER = 1;
 
     @Bind(R.id.details_trailers_linear_layout)
     LinearLayout trailersLinearLayout;
@@ -93,13 +94,10 @@ public class MovieDetailFragment extends Fragment
         if (arguments != null) {
             movie = arguments.getParcelable(getString(R.string.parcelable_movie_key));
             setMovieDetails(movie);
-            loadMovieTrailers(movie);
-            loadMovieReviews(movie);
+            loadMovieTrailersAndReviews(movie);
         }
 
-        //Intent caller = getActivity().getIntent();
-        //movie = caller.getParcelableExtra(getString(R.string.parcelable_movie_key));
-        return rootView;
+        return movie!= null ? rootView : null;
     }
 
     private void setMovieDetails(Movie movie) {
@@ -126,14 +124,9 @@ public class MovieDetailFragment extends Fragment
         }
     }
 
-    private void loadMovieReviews(Movie movie) {
-        FetchReviewsTask fetchReviewsTask = new FetchReviewsTask(this);
-        fetchReviewsTask.execute(String.valueOf(movie.getId()));
-    }
-
-    private void loadMovieTrailers(Movie movie) {
-        FetchTrailersTask fetchTrailersTask = new FetchTrailersTask(this);
-        fetchTrailersTask.execute(String.valueOf(movie.getId()));
+    private void loadMovieTrailersAndReviews(Movie movie) {
+        FetchTrailersAndReviewsTask fetchTrailersAndReviewsTask = new FetchTrailersAndReviewsTask(getContext(), this);
+        fetchTrailersAndReviewsTask.execute(String.valueOf(movie.getId()));
     }
 
     @OnClick(R.id.details_favorite_toggle_button)
@@ -214,23 +207,75 @@ public class MovieDetailFragment extends Fragment
     }
 
     @Override
-    public void onFetchReviewsTaskComplete(PagedReviewList pagedReviewList) {
-        this.pagedReviewList = pagedReviewList;
-        ReviewsArrayAdapter reviewsArrayAdapter = new ReviewsArrayAdapter(getContext(), pagedReviewList.getReviews());
-
-        for (int i = 0; i < reviewsArrayAdapter.getCount(); i++) {
-            reviewsLinearLayout.addView(reviewsArrayAdapter.getView(i, null, null));
-        }
+    public void onTaskComplete() {
+        getLoaderManager().restartLoader(REVIEWS_LOADER, null, this);
+        getLoaderManager().restartLoader(TRAILERS_LOADER, null, this);
     }
 
+    // Cursor Methods
 
     @Override
-    public void onFetchTrailersTaskComplete(PagedTrailerList pagedTrailerList) {
-        this.pagedTrailerList = pagedTrailerList;
-        TrailersArrayAdapter trailersArrayAdapter = new TrailersArrayAdapter(getContext(), pagedTrailerList.getTrailers());
-
-        for (int i = 0; i < trailersArrayAdapter.getCount(); i++) {
-            trailersLinearLayout.addView(trailersArrayAdapter.getView(i, null, null));
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        CursorLoader cursorLoader = null;
+        if(movie != null) {
+            switch (id) {
+                case REVIEWS_LOADER:
+                    cursorLoader = new CursorLoader(getContext(),
+                            PopMoviesProvider.Reviews.withMovieId(movie.getId()),
+                            Review.ReviewColumnProjection.getProjection(),
+                            null,
+                            null,
+                            null);
+                    break;
+                case TRAILERS_LOADER:
+                    cursorLoader = new CursorLoader(getContext(),
+                            PopMoviesProvider.Trailers.withMovieId(movie.getId()),
+                            Trailer.TrailerColumnProjection.getProjection(),
+                            null,
+                            null,
+                            null);
+                    break;
+            }
         }
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        switch (loader.getId()){
+            case REVIEWS_LOADER:
+                reviewsLinearLayout.removeAllViews();
+                while(data.moveToNext()){
+                    Review review = new Review(data);
+                    LinearLayout reviewItemLinearLayout = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.item_review, null, false);
+                    TextView reviewContentTextView = (TextView) reviewItemLinearLayout.findViewById(R.id.review_content_text_view);
+                    TextView reviewAuthorTextView = (TextView) reviewItemLinearLayout.findViewById(R.id.review_author_text_view);
+                    review.setContent(reviewContentTextView);
+                    review.setAuthor(reviewAuthorTextView);
+                    reviewsLinearLayout.addView(reviewItemLinearLayout);
+                }
+                break;
+            case TRAILERS_LOADER:
+                trailersLinearLayout.removeAllViews();
+                while(data.moveToNext()){
+                    Trailer trailer = new Trailer(data);
+                    TextView trailerItemTextView = (TextView)LayoutInflater.from(getContext()).inflate(R.layout.item_trailer, null, false);
+                    trailer.setName(trailerItemTextView);
+                    trailersLinearLayout.addView(trailerItemTextView);
+                }
+                break;
+        }
+        data.close();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {  }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(REVIEWS_LOADER, null, this);
+        getLoaderManager().initLoader(TRAILERS_LOADER, null, this);
+        Log.v(LOG_TAG, "Loader initialized");
+        super.onActivityCreated(savedInstanceState);
     }
 }

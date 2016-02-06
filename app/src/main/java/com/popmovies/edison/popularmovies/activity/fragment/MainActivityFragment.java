@@ -13,12 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ListView;
 
 import com.popmovies.edison.popularmovies.R;
 import com.popmovies.edison.popularmovies.Utility;
 import com.popmovies.edison.popularmovies.activity.async.FetchMoviesTask;
-import com.popmovies.edison.popularmovies.activity.async.FetchMoviesTaskListener;
 import com.popmovies.edison.popularmovies.data.PopMoviesProvider;
 import com.popmovies.edison.popularmovies.model.Movie;
 import com.popmovies.edison.popularmovies.model.adapter.MovieCursorAdapter;
@@ -31,15 +29,17 @@ import butterknife.ButterKnife;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FetchMoviesTaskListener<Void> {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FetchMoviesTask.Listener {
 
     public final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     private static final int MOVIES_LOADER = 0;
     private static final String SELECTED_MOVIE_KEY = "selected_movie_index";
     private MovieCursorAdapter moviesCursorAdapter;
+
     private ArrayList<Movie> movieList;
     @Bind(R.id.movies_grid_view)
     GridView moviesGridView;
+
     private int selectedMovieIndex;
 
     /**
@@ -61,8 +61,13 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (!restoreState(savedInstanceState)) {
-            //fetchMovieList();
+            fetchMovieList();
         }
+    }
+
+    private void fetchMovieList() {
+        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(getContext(),this);
+        fetchMoviesTask.execute();
     }
 
     @Override
@@ -112,13 +117,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         return restored;
     }
 
-    private void fetchMovieList() {
-        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(getContext(),this);
-        fetchMoviesTask.execute();
-    }
+
 
     @Override
-    public void onTaskComplete(Void result) {
+    public void onTaskComplete() {
         getLoaderManager().restartLoader(MOVIES_LOADER, null, this);
     }
 

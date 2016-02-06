@@ -39,7 +39,6 @@ public class MovieCursorAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        Log.v(LOG_TAG, "new View Called");
         View itemMovie = LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false);
         ViewHolder viewHolder = new ViewHolder(itemMovie);
         itemMovie.setTag(viewHolder);
@@ -48,17 +47,8 @@ public class MovieCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, final Context context, Cursor cursor) {
-        Log.v(LOG_TAG, "bind view Called");
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         final Movie movie = new Movie(cursor);
-        /*viewHolder.movieImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent detailsIntent = new Intent(context, MovieDetailActivity.class);
-                detailsIntent.putExtra(context.getString(R.string.parcelable_movie_key), movie);
-                context.startActivity(detailsIntent);
-            }
-        });*/
         movie.setPoster(context, viewHolder.movieImageView);
     }
 }
