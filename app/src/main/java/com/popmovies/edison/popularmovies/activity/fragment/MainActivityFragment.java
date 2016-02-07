@@ -36,7 +36,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private static final String SELECTED_MOVIE_KEY = "selected_movie_index";
     private MovieCursorAdapter moviesCursorAdapter;
 
-    private ArrayList<Movie> movieList;
     @Bind(R.id.movies_grid_view)
     GridView moviesGridView;
 
@@ -61,8 +60,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String sortPref = Utility.getPreferredSortOrder(getContext());
-        if (!restoreState(savedInstanceState)) {
-            if(sortPref != getString(R.string.pref_sort_by_favorites))
+        if (!sortPref.equals(getString(R.string.pref_sort_by_favorites))){
                 fetchMovieList();
         }
     }
@@ -80,8 +78,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         if (selectedMovieIndex != GridView.INVALID_POSITION) {
             outState.putInt(SELECTED_MOVIE_KEY, selectedMovieIndex);
         }
-
-        outState.putParcelableArrayList("movies", movieList);
         super.onSaveInstanceState(outState);
     }
 
@@ -107,19 +103,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
         return rootView;
     }
-
-    private boolean restoreState(Bundle savedInstanceState) {
-        boolean restored = true;
-        if (savedInstanceState == null || !savedInstanceState.containsKey("movies")) {
-            movieList = new ArrayList<>();
-            restored = false;
-        } else {
-            movieList = savedInstanceState.getParcelableArrayList("movies");
-        }
-        return restored;
-    }
-
-
 
     @Override
     public void onTaskComplete() {

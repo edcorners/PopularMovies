@@ -66,7 +66,8 @@ public class Movie implements Parcelable {
         this.overview = overview;
         this.rating = rating;
         this.releaseDateString = releaseDate;
-
+        this.reviewList = new PagedReviewList(id);
+        this.trailerList = new PagedTrailerList(id);
     }
 
     private Movie(Parcel in) {
@@ -76,21 +77,19 @@ public class Movie implements Parcelable {
         this.overview = in.readString();
         this.rating = in.readDouble();
         this.releaseDateString = in.readString();
+        this.reviewList = new PagedReviewList(id);
+        this.trailerList = new PagedTrailerList(id);
     }
 
     public Movie(Cursor cursor){
-        //int index = cursor.getColumnIndex(MovieColumns.MOVIE_ID);
         this.id = cursor.getLong(MovieColumnProjection.MOVIE_ID.ordinal());
-        //index = cursor.getColumnIndex(MovieColumns.TITLE);
         this.title = cursor.getString(MovieColumnProjection.TITLE.ordinal());
-        //index = cursor.getColumnIndex(MovieColumns.OVERVIEW);
         this.overview = cursor.getString(MovieColumnProjection.OVERVIEW.ordinal());
-        //index = cursor.getColumnIndex(MovieColumns.POSTER_PATH);
         this.posterPath = cursor.getString(MovieColumnProjection.POSTER_PATH.ordinal());
-        //index = cursor.getColumnIndex(MovieColumns.RATING);
         this.rating = cursor.getDouble(MovieColumnProjection.RATING.ordinal());
-        //index = cursor.getColumnIndex(MovieColumns.RELEASE_DATE);
         this.releaseDateString = cursor.getString(MovieColumnProjection.RELEASE_DATE.ordinal());
+        this.reviewList = new PagedReviewList(id);
+        this.trailerList = new PagedTrailerList(id);
     }
 
     public enum MovieColumnProjection{
@@ -153,6 +152,14 @@ public class Movie implements Parcelable {
 
     // Business methods
 
+    public Trailer getFirstTrailer() {
+        return trailerList.getFirst();
+    }
+
+    public boolean hasTrailers() {
+        return !trailerList.isEmpty();
+    }
+
     public Uri getPosterUri() {
         Uri.Builder uriBuilder = null;
         if(posterPath != null){
@@ -201,6 +208,22 @@ public class Movie implements Parcelable {
         String date = this.releaseDateString == null ? "-" : Utility.yearFormat.format(getReleaseDate());
         movieReleaseDate.setText(date);
         return movieReleaseDate;
+    }
+
+    public void addTrailer(Trailer trailer) {
+        trailerList.addTrailer(trailer);
+    }
+
+    public void clearTrailerList(){
+        trailerList.clear();
+    }
+
+    public void addReview(Review review){
+        reviewList.addReview(review);
+    }
+
+    public void clearReviewList(){
+        reviewList.clear();
     }
 
     public ContentValues toContentValues() {

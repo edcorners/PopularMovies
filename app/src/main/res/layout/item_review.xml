@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:id="@+id/review_entry_linear_layout">
+    android:id="@+id/review_entry_linear_layout"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
     <TextView
         android:layout_width="fill_parent"

@@ -17,7 +17,7 @@ public class PagedReviewList {
 
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private long id;
     @SerializedName("page")
     @Expose
     private Integer page;
@@ -30,6 +30,21 @@ public class PagedReviewList {
     @SerializedName("total_results")
     @Expose
     private Integer totalResults;
+
+    public PagedReviewList() {
+    }
+
+    public PagedReviewList(long id) {
+        this.id = id;
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+    }
+
+    public void clear() {
+        reviews.clear();
+    }
 
     public Vector<ContentValues> toContentValues() {
         Vector<ContentValues> contentValuesVector = new Vector<>(reviews.size());
@@ -46,7 +61,7 @@ public class PagedReviewList {
      * @return
      * The id
      */
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
@@ -55,7 +70,7 @@ public class PagedReviewList {
      * @param id
      * The id
      */
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -138,7 +153,7 @@ public class PagedReviewList {
 
         PagedReviewList that = (PagedReviewList) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (id != that.id) return false;
         if (page != null ? !page.equals(that.page) : that.page != null) return false;
         if (reviews != null ? !reviews.equals(that.reviews) : that.reviews != null) return false;
         if (totalPages != null ? !totalPages.equals(that.totalPages) : that.totalPages != null)
@@ -149,7 +164,7 @@ public class PagedReviewList {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (page != null ? page.hashCode() : 0);
         result = 31 * result + (reviews != null ? reviews.hashCode() : 0);
         result = 31 * result + (totalPages != null ? totalPages.hashCode() : 0);
@@ -167,6 +182,5 @@ public class PagedReviewList {
                 ", totalResults=" + totalResults +
                 '}';
     }
-
 
 }

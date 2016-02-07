@@ -16,10 +16,17 @@ import java.util.Vector;
 public class PagedTrailerList {
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private long id;
     @SerializedName("results")
     @Expose
     private List<Trailer> trailers = new ArrayList<>();
+
+    public PagedTrailerList() {
+    }
+
+    public PagedTrailerList(long id) {
+        this.id = id;
+    }
 
     public Vector<ContentValues> toContentValues() {
         Vector<ContentValues> contentValuesVector = new Vector<>(trailers.size());
@@ -31,12 +38,28 @@ public class PagedTrailerList {
         return contentValuesVector;
     }
 
+    public void addTrailer(Trailer trailer) {
+        trailers.add(trailer);
+    }
+
+    public void clear() {
+        trailers.clear();
+    }
+
+    public Trailer getFirst() {
+        return trailers.isEmpty() ? null: trailers.get(0);
+    }
+
+    public boolean isEmpty() {
+        return trailers.isEmpty();
+    }
+
     /**
      *
      * @return
      * The id
      */
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
@@ -45,7 +68,7 @@ public class PagedTrailerList {
      * @param id
      * The id
      */
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -74,14 +97,14 @@ public class PagedTrailerList {
 
         PagedTrailerList that = (PagedTrailerList) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (id != that.id) return false;
         return !(trailers != null ? !trailers.equals(that.trailers) : that.trailers != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
+        int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (trailers != null ? trailers.hashCode() : 0);
         return result;
     }

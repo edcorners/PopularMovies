@@ -1,20 +1,20 @@
 package com.popmovies.edison.popularmovies.activity.fragment;
 
-import android.content.ContentProviderOperation;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.RemoteException;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -29,12 +29,8 @@ import com.popmovies.edison.popularmovies.activity.async.FetchTrailersAndReviews
 import com.popmovies.edison.popularmovies.data.PopMoviesDatabaseServices;
 import com.popmovies.edison.popularmovies.data.PopMoviesProvider;
 import com.popmovies.edison.popularmovies.model.Movie;
-import com.popmovies.edison.popularmovies.model.PagedReviewList;
-import com.popmovies.edison.popularmovies.model.PagedTrailerList;
 import com.popmovies.edison.popularmovies.model.Review;
 import com.popmovies.edison.popularmovies.model.Trailer;
-
-import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,6 +42,7 @@ import butterknife.OnClick;
 public class MovieDetailFragment extends Fragment
         implements FetchTrailersAndReviewsTask.Listener, LoaderManager.LoaderCallbacks<Cursor>{
 
+    public static final String SHARE_TEXT = " - Shared from #PopMoviesApp";
     private final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
     private static final int REVIEWS_LOADER = 0;
     private static final int TRAILERS_LOADER = 1;
@@ -73,8 +70,9 @@ public class MovieDetailFragment extends Fragment
 
     @Bind(R.id.details_scroll_view)
     ScrollView detailsScrollView;
-    private Movie movie;
-    private PopMoviesDatabaseServices databaseServices;
+    private Movie mMovie;
+    private PopMoviesDatabaseServices mDatabaseServices;
+    private ShareActionProvider mShareActionProvider;
 
     public MovieDetailFragment() {
         setHasOptionsMenu(true);
@@ -88,18 +86,18 @@ public class MovieDetailFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        Log.v(LOG_TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, rootView);
         Bundle arguments = getArguments();
-        databaseServices = new PopMoviesDatabaseServices(getContext());
+        mDatabaseServices = new PopMoviesDatabaseServices(getContext());
         if (arguments != null) {
-            movie = arguments.getParcelable(getString(R.string.parcelable_movie_key));
-            setMovieDetails(movie);
-            loadMovieTrailersAndReviews(movie);
+            mMovie = arguments.getParcelable(getString(R.string.parcelable_movie_key));
+            setMovieDetails(mMovie);
+            loadMovieTrailersAndReviews(mMovie);
         }
 
-        return movie!= null ? rootView : null;
+        return mMovie != null ? rootView : null;
     }
 
     private void setMovieDetails(Movie movie) {
@@ -110,7 +108,7 @@ public class MovieDetailFragment extends Fragment
         movie.setOverview(movieOverview);
         movie.setRating(getContext(), movieRating);
         movie.setReleaseDate(movieReleaseDate);
-        favoriteToggleButton.setChecked(databaseServices.isFavorite(movie));
+        favoriteToggleButton.setChecked(mDatabaseServices.isFavorite(movie));
     }
 
     private void loadMovieTrailersAndReviews(Movie movie) {
@@ -124,28 +122,54 @@ public class MovieDetailFragment extends Fragment
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    databaseServices.insertFavorite(movie);
-                    Log.v(LOG_TAG, "Saved as favorite "+movie);
+                    mDatabaseServices.insertFavorite(mMovie);
+                    Log.v(LOG_TAG, "Saved as favorite "+ mMovie);
                 }
             }).start();
         } else {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    databaseServices.deleteFavorite(movie);
-                    Log.v(LOG_TAG, "Deleted from favorites "+movie);
+                    mDatabaseServices.deleteFavorite(mMovie);
+                    Log.v(LOG_TAG, "Deleted from favorites "+ mMovie);
                 }
             }).start();
         }
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_movie_detail, menu);
+
+        // Retrieve the share menu item
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+
+        // Get the provider and hold onto it to set/change the share intent.
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+        if (mMovie != null && mMovie.hasTrailers()) {
+            mShareActionProvider.setShareIntent(createShareTrailerIntent(mMovie.getFirstTrailer()));
+        }else{
+            mShareActionProvider.setShareIntent(null);
+        }
+    }
+
+    private Intent createShareTrailerIntent(Trailer trailer) {
+        Intent shareIntent = null;
+        if(trailer != null) {
+            String shareString = trailer.getVideoUri() + SHARE_TEXT;
+            shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareString);
+        }
+        return shareIntent;
     }
 
     @Override
     public void onTaskComplete() {
+        Log.v(LOG_TAG," Restarting loaders");
         getLoaderManager().restartLoader(REVIEWS_LOADER, null, this);
         getLoaderManager().restartLoader(TRAILERS_LOADER, null, this);
     }
@@ -155,19 +179,22 @@ public class MovieDetailFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         CursorLoader cursorLoader = null;
-        if(movie != null) {
+
+        if(mMovie != null) {
             switch (id) {
                 case REVIEWS_LOADER:
+                    Log.v(LOG_TAG, "onCreateLoader REVIEWS_LOADER");
                     cursorLoader = new CursorLoader(getContext(),
-                            PopMoviesProvider.Reviews.withMovieId(movie.getId()),
+                            PopMoviesProvider.Reviews.withMovieId(mMovie.getId()),
                             Review.ReviewColumnProjection.getProjection(),
                             null,
                             null,
                             null);
                     break;
                 case TRAILERS_LOADER:
+                    Log.v(LOG_TAG, "onCreateLoader TRAILERS_LOADER");
                     cursorLoader = new CursorLoader(getContext(),
-                            PopMoviesProvider.Trailers.withMovieId(movie.getId()),
+                            PopMoviesProvider.Trailers.withMovieId(mMovie.getId()),
                             Trailer.TrailerColumnProjection.getProjection(),
                             null,
                             null,
@@ -180,25 +207,36 @@ public class MovieDetailFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch (loader.getId()){
-            case REVIEWS_LOADER:
-                reviewsLinearLayout.removeAllViews();
-                while(data.moveToNext()){
-                    buildReviewView(data);
-                }
-                break;
-            case TRAILERS_LOADER:
-                trailersLinearLayout.removeAllViews();
-                while(data.moveToNext()){
-                    buildTrailerView(data);
-                }
-                break;
+        if (data != null ) {
+            switch (loader.getId()) {
+                case REVIEWS_LOADER:
+                    Log.v(LOG_TAG, "LoadFinished REVIEWS_LOADER ");
+                    mMovie.clearReviewList();
+                    data.moveToPosition(-1); //Rewind cursor
+                    reviewsLinearLayout.removeAllViews();
+                    while (data.moveToNext()) {
+                        buildReviewView(data);
+                    }
+                    break;
+                case TRAILERS_LOADER:
+                    Log.v(LOG_TAG, "LoadFinished TRAILERS_LOADER ");
+                    mMovie.clearTrailerList();
+                    data.moveToPosition(-1); //Rewind cursor
+                    trailersLinearLayout.removeAllViews();
+                    while (data.moveToNext()) {
+                        buildTrailerView(data);
+                    }
+                    break;
+            }
+            if (mShareActionProvider != null) {
+                mShareActionProvider.setShareIntent(createShareTrailerIntent(mMovie.getFirstTrailer()));
+            }
         }
-        data.close();
     }
 
     private void buildTrailerView(Cursor data) {
         final Trailer trailer = new Trailer(data);
+        mMovie.addTrailer(trailer);
         TextView trailerItemTextView = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.item_trailer, null, false);
         trailer.setName(trailerItemTextView);
         trailerItemTextView.setOnClickListener(new View.OnClickListener() {
@@ -213,6 +251,7 @@ public class MovieDetailFragment extends Fragment
 
     private void buildReviewView(Cursor data) {
         Review review = new Review(data);
+        mMovie.addReview(review);
         LinearLayout reviewItemLinearLayout = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.item_review, null, false);
         TextView reviewContentTextView = (TextView) reviewItemLinearLayout.findViewById(R.id.review_content_text_view);
         TextView reviewAuthorTextView = (TextView) reviewItemLinearLayout.findViewById(R.id.review_author_text_view);
@@ -226,9 +265,9 @@ public class MovieDetailFragment extends Fragment
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "Initializing loaders");
         getLoaderManager().initLoader(REVIEWS_LOADER, null, this);
         getLoaderManager().initLoader(TRAILERS_LOADER, null, this);
-        Log.v(LOG_TAG, "Loader initialized");
         super.onActivityCreated(savedInstanceState);
     }
 }
