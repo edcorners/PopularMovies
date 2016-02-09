@@ -16,11 +16,11 @@ public interface UpdateLogColumns {
     String _ID = "_id";
 
     @DataType(DataType.Type.TEXT)
-    String ITEM_KEY = "item_key";
+    String ITEM_KEY = "item_key"; // identifies a list of updatable elements e.g. "movie", "trailer-1231" where 1231 is a movie id
 
     @DataType(DataType.Type.TEXT)
-    String SORTING_ATTRIBUTE = "sorting_attribute";
+    String SORTING_ATTRIBUTE = "sorting_attribute"; // can be popularity.desc, vote_average.desc or favorites if the item key is "movie"
 
     @DataType(DataType.Type.TEXT)
-    String LAST_UPDATE = "last_update";
+    String LAST_UPDATE = "last_update"; // date of the last update
 }

@@ -21,6 +21,9 @@ import android.preference.PreferenceManager;
 
 import java.text.SimpleDateFormat;
 
+/**
+ *
+ */
 public class Utility {
 
     public static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

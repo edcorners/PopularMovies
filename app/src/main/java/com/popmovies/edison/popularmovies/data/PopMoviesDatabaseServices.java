@@ -25,19 +25,30 @@ import java.util.Date;
 
 /**
  * Created by Edison on 2/5/2016.
+ * Defines basic services for the PopMoviesDatabase using a content provider.
+ * Databases are sync every 3 hours
  */
 public class PopMoviesDatabaseServices {
 
-    private static final int UPDATE_FREQ_IN_MILLIS = 10800000; //3 hours
+    private static final int UPDATE_FREQ_IN_MILLIS = 10800000; // 3 hours in mllis
     private Context mContext;
     private final String LOG_TAG = PopMoviesDatabaseServices.class.getSimpleName();
     private String favoritesString;
 
+    /**
+     * Basic constructor
+     */
     public PopMoviesDatabaseServices(Context context) {
         this.mContext = context;
         favoritesString = mContext.getResources().getString(R.string.pref_sort_by_favorites);
     }
 
+    /**
+     * Inserts and/or updates a list of reviews and trailers
+     * @param pagedReviewList list of reviews
+     * @param pagedTrailerList list of trailers
+     * @param updateKey unique identifier for this update
+     */
     public void updateReviewsAndTrailers(PagedReviewList pagedReviewList, PagedTrailerList pagedTrailerList, String updateKey) {
         ArrayList<ContentProviderOperation> batchUpserts = new ArrayList<>();
 
@@ -54,6 +65,11 @@ public class PopMoviesDatabaseServices {
         }
     }
 
+    /**
+     * Generates a list of inserts and/or updates based on a list of trailers. Updates if the record exists. Inserts otherwise.
+     * @param trailerList list of trailers
+     * @return inserts and/or updates ready to run on a batch
+     */
     private ArrayList<ContentProviderOperation> getTrailersUpserts(PagedTrailerList trailerList) {
         ArrayList<ContentProviderOperation> batchUpserts = new ArrayList<>();
         ContentProviderOperation.Builder builder = null;
@@ -80,6 +96,11 @@ public class PopMoviesDatabaseServices {
         return batchUpserts;
     }
 
+    /**
+     * Generates a list of inserts and/or updates based on a list of reviews. Updates if the record exists. Inserts otherwise.
+     * @param reviewList list of reviews
+     * @return inserts and/or updates ready to run on a batch
+     */
     private ArrayList<ContentProviderOperation> getReviewsUpserts(PagedReviewList reviewList) {
         ArrayList<ContentProviderOperation> batchUpserts = new ArrayList<>();
         ContentProviderOperation.Builder builder = null;
@@ -106,6 +127,11 @@ public class PopMoviesDatabaseServices {
         return batchUpserts;
     }
 
+    /**
+     * Inserts and/or updates a list of movies based on a sorting preference
+     * @param sortBy sorting preference (popularity.desc, vote_average.desc)
+     * @param pagedMovieList list of movies
+     */
     public void updateMovies(String sortBy, PagedMovieList pagedMovieList) {
         mContext.getContentResolver().delete(PopMoviesProvider.SortingAttributes.withPreferenceCategory(sortBy), null, null);
 
@@ -122,6 +148,12 @@ public class PopMoviesDatabaseServices {
         }
     }
 
+    /**
+     * Creates an update/insert sentence for the update log table.
+     * @param sortBy sorting criteria (popularity.desc, vote_average.desc), can be an empty string
+     * @param itemKey identifies the element being updated
+     * @return insert/update operation, ready to be executed as part of a batch
+     */
     private ContentProviderOperation createUpdateLogUpsertOperation(String sortBy, String itemKey) {
         ContentProviderOperation.Builder builder;
         ContentValues updateLogContentValues = new ContentValues();
@@ -146,6 +178,12 @@ public class PopMoviesDatabaseServices {
         return builder.build();
     }
 
+    /**
+     * Creates a list of inserts for the sorting attribute table, based on a list of movies and a sorting value.
+     * @param sortBy sorting attribute
+     * @param pagedMovieList list of movies
+     * @return list of inserts of movies with their corresponding sorting attribute
+     */
     private ArrayList<ContentProviderOperation> createSortingAttributeInserts(String sortBy, PagedMovieList pagedMovieList) {
         ArrayList<ContentProviderOperation> batchInserts = new ArrayList<>();
         ContentProviderOperation.Builder builder;
@@ -156,6 +194,11 @@ public class PopMoviesDatabaseServices {
         return batchInserts;
     }
 
+    /**
+     * Creates a list of updates/inserts for movies. Update if movie exists in the database. Insert otherwise.
+     * @param pagedMovieList list of movies
+     * @return list of insert/update operations ready to be applied as batch
+     */
     private ArrayList<ContentProviderOperation> createMovieUpsertOperations(PagedMovieList pagedMovieList) {
         ArrayList<ContentProviderOperation> batchUpserts = new ArrayList<>();
         ContentProviderOperation.Builder builder = null;
@@ -179,6 +222,12 @@ public class PopMoviesDatabaseServices {
         return batchUpserts;
     }
 
+    /**
+     * Checks the last update time of movies or reviews or trailers, based on the item key and the sorting attribute.
+     * @param sortBy sorting attribute. Can be a empty string for reviews and trailers
+     * @param itemKey mandatory key that identifies the items aimed for update
+     * @return true if the sortBy/itemKey pair represents a list of items that need to be updated
+     */
     public boolean isUpdateTime(String sortBy, String itemKey) {
         boolean updateTime = true;
         sortBy = sortBy == null ? "": sortBy;
@@ -208,6 +257,10 @@ public class PopMoviesDatabaseServices {
         return updateTime;
     }
 
+    /**
+     * Inserts a record into the SortingAttributes table, with "favorites" as value for sortBy column
+     * @param movie movie object containing the id of a movie
+     */
     public void insertFavorite(Movie movie){
         Cursor sequenceCursor = mContext.getContentResolver().query(PopMoviesProvider.SortingAttributes.CONTENT_URI,
                 new String[]{"MAX(" + SortingAttributesColumns.POSITION + ")"},
@@ -224,6 +277,10 @@ public class PopMoviesDatabaseServices {
         mContext.getContentResolver().insert(PopMoviesProvider.SortingAttributes.CONTENT_URI,contentValues);
     }
 
+    /**
+     * Deletes a movie from the favorite list in SortingAttributes
+     * @param movie movie object containing the id of a movie
+     */
     public void deleteFavorite(Movie movie){
 
         String where = SortingAttributesColumns.MOVIE_ID + " =? AND " + SortingAttributesColumns.PREFERENCE_CATEGORY + " =?";
@@ -233,6 +290,11 @@ public class PopMoviesDatabaseServices {
                 selectionArgs);
     }
 
+    /**
+     * Determines if a movie is in the list of favorites by querying the SortingAttributes table.
+     * @param movie movie object containing the id of a movie
+     * @return true if the movie is on the list of favorites, false otherwise
+     */
     public boolean isFavorite(Movie movie) {
         String selection = SortingAttributesColumns.PREFERENCE_CATEGORY+ " =? AND " + SortingAttributesColumns.MOVIE_ID + " =?";
         String[] selectionArgs = {favoritesString, String.valueOf(movie.getId())};

@@ -68,17 +68,6 @@ public class PopMoviesProvider {
         public static final Uri CONTENT_URI = buildUri(Path.REVIEW);
 
         @InexactContentUri(
-                name = "REVIEW_BY_MOVIE_ID",
-                path = Path.MOVIES + "/#/"+Path.REVIEW,
-                type = "vnd.android.cursor.dir/review",
-                whereColumn = ReviewColumns.MOVIE_ID,
-                pathSegment = 1
-        )
-        public static Uri withMovieId(long id){
-            return buildUri(Path.MOVIES, String.valueOf(id), Path.REVIEW);
-        }
-
-        @InexactContentUri(
                 name = "REVIEW_BY_ID",
                 path = Path.REVIEW + "/*",
                 type = "vnd.android.cursor.item/review",
@@ -99,17 +88,6 @@ public class PopMoviesProvider {
         public static final Uri CONTENT_URI = buildUri(Path.TRAILER);
 
         @InexactContentUri(
-                name = "TRAILER_BY_MOVIE_ID",
-                path = Path.MOVIES + "/#/"+Path.TRAILER,
-                type = "vnd.android.cursor.dir/trailer",
-                whereColumn = TrailerColumns.MOVIE_ID,
-                pathSegment = 1
-        )
-        public static Uri withMovieId(long id){
-            return buildUri(Path.MOVIES, String.valueOf(id), Path.TRAILER);
-        }
-
-        @InexactContentUri(
                 name = "TRAILER_BY_ID",
                 path = Path.TRAILER + "/*",
                 type = "vnd.android.cursor.item/trailer",
@@ -128,17 +106,6 @@ public class PopMoviesProvider {
                 path = Path.UPDATE_LOGS,
                 type = "vnd.android.cursor.dir/update_log")
         public static final Uri CONTENT_URI = buildUri(Path.UPDATE_LOGS);
-
-        @InexactContentUri(
-                name = "BY_SORTING_ATTRIBUTE",
-                path = Path.UPDATE_LOGS + "/" +Path.SORTING_ATTRIBUTES + "/*",
-                type = "vnd.android.cursor.item/update_log",
-                whereColumn = UpdateLogColumns.SORTING_ATTRIBUTE,
-                pathSegment = 2
-        )
-        public static Uri withSortingAttribute(String sort){
-            return buildUri(Path.UPDATE_LOGS, Path.SORTING_ATTRIBUTES, sort);
-        }
 
     }
 

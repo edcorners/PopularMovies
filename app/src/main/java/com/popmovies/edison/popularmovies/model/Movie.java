@@ -23,11 +23,11 @@ import java.util.Date;
 
 /**
  * Created by Edison on 12/18/2015.
+ * Represents a movie object and encapsulates operations related to a movie
  */
 public class Movie implements Parcelable {
 
     private final String LOG_TAG = Movie.class.getSimpleName();
-    private static final String RATING_SCALE = "/10";
 
     @SerializedName("id")
     @Expose
@@ -59,17 +59,6 @@ public class Movie implements Parcelable {
 
     // Constructors
 
-    public Movie(long id, String title, String posterPath, String overview, double rating, String releaseDate){
-        this.id = id;
-        this.title = title;
-        this.posterPath = posterPath;
-        this.overview = overview;
-        this.rating = rating;
-        this.releaseDateString = releaseDate;
-        this.reviewList = new PagedReviewList(id);
-        this.trailerList = new PagedTrailerList(id);
-    }
-
     private Movie(Parcel in) {
         this.id = in.readLong();
         this.title = in.readString();
@@ -92,6 +81,9 @@ public class Movie implements Parcelable {
         this.trailerList = new PagedTrailerList(id);
     }
 
+    /**
+     *
+     */
     public enum MovieColumnProjection{
         _ID(PopMoviesDatabase.MOVIES+"."+MovieColumns._ID),
         MOVIE_ID(PopMoviesDatabase.MOVIES+"."+MovieColumns.MOVIE_ID),
@@ -160,6 +152,10 @@ public class Movie implements Parcelable {
         return !trailerList.isEmpty();
     }
 
+    /**
+     *
+     * @return
+     */
     public Uri getPosterUri() {
         Uri.Builder uriBuilder = null;
         if(posterPath != null){
@@ -170,6 +166,10 @@ public class Movie implements Parcelable {
         return uriBuilder != null ? uriBuilder.build() : null;
     }
 
+    /**
+     *
+     * @return
+     */
     public Date getReleaseDate() {
         Date parsedDate = null;
         try {
@@ -180,11 +180,22 @@ public class Movie implements Parcelable {
         return parsedDate;
     }
 
+    /**
+     *
+     * @param movieTitle
+     * @return
+     */
     public TextView setTitle(TextView movieTitle) {
         movieTitle.setText(this.title);
         return movieTitle;
     }
 
+    /**
+     *
+     * @param context
+     * @param poster
+     * @return
+     */
     public ImageView setPoster(Context context, ImageView poster) {
         Picasso.with(context)
                 .load(getPosterUri())
@@ -194,16 +205,32 @@ public class Movie implements Parcelable {
         return poster;
     }
 
+    /**
+     *
+     * @param movieOverview
+     * @return
+     */
     public TextView setOverview(TextView movieOverview) {
         movieOverview.setText(this.overview);
         return movieOverview;
     }
 
+    /**
+     *
+     * @param context
+     * @param movieRating
+     * @return
+     */
     public TextView setRating(Context context, TextView movieRating) {
         movieRating.setText(Utility.formatRating(context, this.rating));
         return movieRating;
     }
 
+    /**
+     *
+     * @param movieReleaseDate
+     * @return
+     */
     public TextView setReleaseDate(TextView movieReleaseDate) {
         String date = this.releaseDateString == null ? "-" : Utility.yearFormat.format(getReleaseDate());
         movieReleaseDate.setText(date);
@@ -226,6 +253,10 @@ public class Movie implements Parcelable {
         reviewList.clear();
     }
 
+    /**
+     *
+     * @return
+     */
     public ContentValues toContentValues() {
         ContentValues cv = new ContentValues();
         cv.put(MovieColumns.MOVIE_ID, id);

@@ -28,6 +28,8 @@ import com.popmovies.edison.popularmovies.R;
 import com.popmovies.edison.popularmovies.activity.async.FetchTrailersAndReviewsTask;
 import com.popmovies.edison.popularmovies.data.PopMoviesDatabaseServices;
 import com.popmovies.edison.popularmovies.data.PopMoviesProvider;
+import com.popmovies.edison.popularmovies.data.ReviewColumns;
+import com.popmovies.edison.popularmovies.data.TrailerColumns;
 import com.popmovies.edison.popularmovies.model.Movie;
 import com.popmovies.edison.popularmovies.model.Review;
 import com.popmovies.edison.popularmovies.model.Trailer;
@@ -40,9 +42,9 @@ import butterknife.OnClick;
  * A placeholder fragment containing a simple view.
  */
 public class MovieDetailFragment extends Fragment
-        implements FetchTrailersAndReviewsTask.Listener, LoaderManager.LoaderCallbacks<Cursor>{
+        implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    public static final String SHARE_TEXT = " - Shared from #PopMoviesApp";
+    public static final String SHARE_TEXT = " - Shared from #PopMoviesApp"; // Used with the share button
     private final String LOG_TAG = MovieDetailFragment.class.getSimpleName();
     private static final int REVIEWS_LOADER = 0;
     private static final int TRAILERS_LOADER = 1;
@@ -67,9 +69,9 @@ public class MovieDetailFragment extends Fragment
     TextView movieReleaseDate;
     @Bind(R.id.details_favorite_toggle_button)
     ToggleButton favoriteToggleButton;
-
     @Bind(R.id.details_scroll_view)
     ScrollView detailsScrollView;
+
     private Movie mMovie;
     private PopMoviesDatabaseServices mDatabaseServices;
     private ShareActionProvider mShareActionProvider;
@@ -100,6 +102,19 @@ public class MovieDetailFragment extends Fragment
         return mMovie != null ? rootView : null;
     }
 
+    /**
+     * Initializes an async taks that loads reviews and trailers information from TMDB
+     * @param movie should have at least an id
+     */
+    private void loadMovieTrailersAndReviews(Movie movie) {
+        FetchTrailersAndReviewsTask fetchTrailersAndReviewsTask = new FetchTrailersAndReviewsTask(getContext());
+        fetchTrailersAndReviewsTask.execute(String.valueOf(movie.getId()));
+    }
+
+    /**
+     * Initializes the details view based on a movie object
+     * @param movie should contain the basic movie information like poster, title, overview, rating and release date.
+     */
     private void setMovieDetails(Movie movie) {
         movie.setTitle(movieTitle);
         movieTitle.setTextColor(ContextCompat.getColor(getContext(), R.color.colorWhite));
@@ -111,17 +126,17 @@ public class MovieDetailFragment extends Fragment
         favoriteToggleButton.setChecked(mDatabaseServices.isFavorite(movie));
     }
 
-    private void loadMovieTrailersAndReviews(Movie movie) {
-        FetchTrailersAndReviewsTask fetchTrailersAndReviewsTask = new FetchTrailersAndReviewsTask(getContext(), this);
-        fetchTrailersAndReviewsTask.execute(String.valueOf(movie.getId()));
-    }
 
+    /**
+     * Favorite button inserts a new favorite when tapped enabled. Deletes when tapped disabled
+     * @param favoriteToggle a toggle button must exist in the view
+     */
     @OnClick(R.id.details_favorite_toggle_button)
     public void onFavoriteToggleClick(ToggleButton favoriteToggle) {
         if (favoriteToggle.isChecked()) {
             new Thread(new Runnable() {
                 @Override
-                public void run() {
+                public void run() { // Preventing favorite button from looking "frozen"
                     mDatabaseServices.insertFavorite(mMovie);
                     Log.v(LOG_TAG, "Saved as favorite "+ mMovie);
                 }
@@ -129,7 +144,7 @@ public class MovieDetailFragment extends Fragment
         } else {
             new Thread(new Runnable() {
                 @Override
-                public void run() {
+                public void run() { //Preventing favorite button from looking "frozen"
                     mDatabaseServices.deleteFavorite(mMovie);
                     Log.v(LOG_TAG, "Deleted from favorites "+ mMovie);
                 }
@@ -155,6 +170,11 @@ public class MovieDetailFragment extends Fragment
         }
     }
 
+    /**
+     * Create a share intent to expose the external youtube URL for the trailer
+     * @param trailer not null, should contain a valid url
+     * @return intent with a call to an external youtube video
+     */
     private Intent createShareTrailerIntent(Trailer trailer) {
         Intent shareIntent = null;
         if(trailer != null) {
@@ -165,13 +185,6 @@ public class MovieDetailFragment extends Fragment
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareString);
         }
         return shareIntent;
-    }
-
-    @Override
-    public void onTaskComplete() {
-        Log.v(LOG_TAG," Restarting loaders");
-        getLoaderManager().restartLoader(REVIEWS_LOADER, null, this);
-        getLoaderManager().restartLoader(TRAILERS_LOADER, null, this);
     }
 
     // Cursor Methods
@@ -185,19 +198,19 @@ public class MovieDetailFragment extends Fragment
                 case REVIEWS_LOADER:
                     Log.v(LOG_TAG, "onCreateLoader REVIEWS_LOADER");
                     cursorLoader = new CursorLoader(getContext(),
-                            PopMoviesProvider.Reviews.withMovieId(mMovie.getId()),
+                            PopMoviesProvider.Reviews.CONTENT_URI,
                             Review.ReviewColumnProjection.getProjection(),
-                            null,
-                            null,
+                            ReviewColumns.MOVIE_ID +"=?",
+                            new String[]{String.valueOf(mMovie.getId())},
                             null);
                     break;
                 case TRAILERS_LOADER:
                     Log.v(LOG_TAG, "onCreateLoader TRAILERS_LOADER");
                     cursorLoader = new CursorLoader(getContext(),
-                            PopMoviesProvider.Trailers.withMovieId(mMovie.getId()),
+                            PopMoviesProvider.Trailers.CONTENT_URI,
                             Trailer.TrailerColumnProjection.getProjection(),
-                            null,
-                            null,
+                            TrailerColumns.MOVIE_ID +"=?",
+                            new String[]{String.valueOf(mMovie.getId())},
                             null);
                     break;
             }
@@ -234,6 +247,10 @@ public class MovieDetailFragment extends Fragment
         }
     }
 
+    /**
+     * Adds a new trailer to the trailer layout
+     * @param data cursor containing trailer information
+     */
     private void buildTrailerView(Cursor data) {
         final Trailer trailer = new Trailer(data);
         mMovie.addTrailer(trailer);
@@ -249,6 +266,10 @@ public class MovieDetailFragment extends Fragment
         trailersLinearLayout.addView(trailerItemTextView);
     }
 
+    /**
+     * Adds a new review to the review layout
+     * @param data cursor containing review information
+     */
     private void buildReviewView(Cursor data) {
         Review review = new Review(data);
         mMovie.addReview(review);

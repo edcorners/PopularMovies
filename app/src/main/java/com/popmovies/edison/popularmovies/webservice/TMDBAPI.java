@@ -2,6 +2,7 @@ package com.popmovies.edison.popularmovies.webservice;
 
 /**
  * Created by Edison on 12/18/2015.
+ * Holds parameters, constant values, and urls related to TMDB API
  */
 public enum TMDBAPI {
     BASE_URL("https://api.themoviedb.org/3"),

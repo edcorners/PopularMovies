@@ -22,20 +22,27 @@ import retrofit.Retrofit;
 
 /**
  * Created by Edison on 12/30/2015.
+ * Movies are fetched from TMDB only if it's update time. (See PopMoviesDatabaseServices isUpdateTime method)
+ * NOTE: Sync adapter was implemented instead but didn't work because of the "40 transactions every 10 seconds" restriction of the API.
  */
-
 public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
 
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
-    private final FetchMoviesTask.Listener listener;
     private Context context;
-    private boolean updated = false;
 
-    public FetchMoviesTask(Context context, FetchMoviesTask.Listener listener) {
+    /**
+     * Default constructor
+     * @param context application context
+     */
+    public FetchMoviesTask(Context context) {
         this.context = context;
-        this.listener = listener;
     }
 
+    /**
+     * doInBackground implementation
+     * @param params
+     * @return
+     */
     @Override
     protected Void doInBackground(Void... params) {
         Log.v(LOG_TAG, "FetchMoviesTask started");
@@ -51,7 +58,7 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
                     .build();
             TMDBWebService service = retrofit.create(TMDBWebService.class);
 
-            if (sortBy.equalsIgnoreCase(context.getString(R.string.pref_sort_by_rating))) {
+            if (sortBy.equalsIgnoreCase(context.getString(R.string.pref_sort_by_rating))) {// Movies sorted by rating don't make much sense without a vote count
                 voteCountGte = Utility.getPreferredVoteCount(context);
             }
             Call<PagedMovieList> moviesCall = service.getMoviesSortedBy(sortBy, voteCountGte, BuildConfig.TMDB_API_KEY);
@@ -62,24 +69,10 @@ public class FetchMoviesTask extends AsyncTask<Void, Void, Void> {
                 PagedMovieList pagedMovieList = response.body();
 
                 databaseServices.updateMovies(sortBy, pagedMovieList);
-                this.updated = true;
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
             }
         }
         return null;
     }
-
-    public interface Listener {
-        void onTaskComplete();
-    }
-
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        if (updated)
-            listener.onTaskComplete();
-    }
-
 }

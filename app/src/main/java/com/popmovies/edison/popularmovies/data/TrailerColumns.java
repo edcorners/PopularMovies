@@ -7,6 +7,7 @@ import net.simonvt.schematic.annotation.References;
 
 /**
  * Created by Edison on 1/14/2016.
+ * Defines the columns for a movie trailer
  */
 public interface TrailerColumns {
     @DataType(DataType.Type.INTEGER)

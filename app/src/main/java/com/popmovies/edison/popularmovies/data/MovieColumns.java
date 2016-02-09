@@ -8,6 +8,7 @@ import net.simonvt.schematic.annotation.Unique;
 
 /**
  * Created by Edison on 1/12/2016.
+ * Defines the columns for a movie
  */
 public interface MovieColumns {
     @DataType(DataType.Type.INTEGER)

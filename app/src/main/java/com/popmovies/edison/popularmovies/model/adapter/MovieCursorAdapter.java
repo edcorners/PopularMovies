@@ -20,10 +20,15 @@ import butterknife.ButterKnife;
 
 /**
  * Created by Edison on 1/20/2016.
+ * Adapter for a cursor representing a movie
  */
 public class MovieCursorAdapter extends CursorAdapter {
 
     private final String LOG_TAG = MovieCursorAdapter.class.getSimpleName();
+
+    /**
+     * View holder pattern implementation
+     */
     public static class ViewHolder {
         @Bind(R.id.movie_poster_image_view)
         public ImageView movieImageView;

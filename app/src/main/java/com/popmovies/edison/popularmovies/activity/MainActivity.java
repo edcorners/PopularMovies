@@ -17,6 +17,9 @@ import com.popmovies.edison.popularmovies.model.Movie;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+/**
+ * Main activity
+ */
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
 
     private final String MOVIE_DETAIL_FRAGMENT_TAG = "MDFTAG";

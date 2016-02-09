@@ -21,25 +21,25 @@ import com.popmovies.edison.popularmovies.data.PopMoviesProvider;
 import com.popmovies.edison.popularmovies.model.Movie;
 import com.popmovies.edison.popularmovies.model.adapter.MovieCursorAdapter;
 
-import java.util.ArrayList;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * A placeholder fragment containing a simple view.
+ * This fragment backs the movie grid view.
  */
-public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FetchMoviesTask.Listener {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     public final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     private static final int MOVIES_LOADER = 0;
-    private static final String SELECTED_MOVIE_KEY = "selected_movie_index";
+
     private MovieCursorAdapter moviesCursorAdapter;
 
     @Bind(R.id.movies_grid_view)
     GridView moviesGridView;
 
-    private int selectedMovieIndex;
+    //Used to restore location of the movie list view
+    private static final String SELECTED_MOVIE_KEY = "selected_movie_index";
+    private int mSelectedMovieIndex;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -60,23 +60,26 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String sortPref = Utility.getPreferredSortOrder(getContext());
-        if (!sortPref.equals(getString(R.string.pref_sort_by_favorites))){
+        if (!sortPref.equals(getString(R.string.pref_sort_by_favorites))){ // Don't trigger fetching if it's favorite list
                 fetchMovieList();
         }
     }
 
+    /**
+     * Initializes the fetch movies async task
+     */
     private void fetchMovieList() {
-        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(getContext(),this);
+        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask(getContext());
         fetchMoviesTask.execute();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         // When tablets rotate, the currently selected list item needs to be saved.
-        // When no item is selected, selectedMovieIndex will be set to GridView.INVALID_POSITION,
+        // When no item is selected, mSelectedMovieIndex will be set to GridView.INVALID_POSITION,
         // so check for that before storing.
-        if (selectedMovieIndex != GridView.INVALID_POSITION) {
-            outState.putInt(SELECTED_MOVIE_KEY, selectedMovieIndex);
+        if (mSelectedMovieIndex != GridView.INVALID_POSITION) {
+            outState.putInt(SELECTED_MOVIE_KEY, mSelectedMovieIndex);
         }
         super.onSaveInstanceState(outState);
     }
@@ -94,19 +97,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 ((Callback) getActivity()).onItemSelected(new Movie(cursor));
-                selectedMovieIndex = position;
+                mSelectedMovieIndex = position;
             }
         });
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_MOVIE_KEY)) {
-            selectedMovieIndex = savedInstanceState.getInt(SELECTED_MOVIE_KEY);
+            mSelectedMovieIndex = savedInstanceState.getInt(SELECTED_MOVIE_KEY);
         }
         return rootView;
-    }
-
-    @Override
-    public void onTaskComplete() {
-        getLoaderManager().restartLoader(MOVIES_LOADER, null, this);
     }
 
     // Cursor loader
@@ -126,8 +124,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.v(LOG_TAG, "Load finished");
         moviesCursorAdapter.swapCursor(data);
-        if (selectedMovieIndex != GridView.INVALID_POSITION) {
-            moviesGridView.smoothScrollToPosition(selectedMovieIndex);
+        if (mSelectedMovieIndex != GridView.INVALID_POSITION) {
+            moviesGridView.smoothScrollToPosition(mSelectedMovieIndex);
         }
     }
 

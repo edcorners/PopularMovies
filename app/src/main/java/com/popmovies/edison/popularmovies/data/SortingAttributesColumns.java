@@ -7,6 +7,7 @@ import net.simonvt.schematic.annotation.PrimaryKey;
 
 /**
  * Created by Edison on 1/21/2016.
+ * This table manages the sorting order for the movies by category and position
  */
 public interface SortingAttributesColumns {
     @DataType(DataType.Type.INTEGER)
@@ -18,7 +19,7 @@ public interface SortingAttributesColumns {
     @NotNull
     String MOVIE_ID = "movie_id";
 
-    @DataType(DataType.Type.TEXT)
+    @DataType(DataType.Type.TEXT) // (popularity.desc, vote_average.desc or favorites)
     String PREFERENCE_CATEGORY = "preference_category";
 
     @DataType(DataType.Type.INTEGER)

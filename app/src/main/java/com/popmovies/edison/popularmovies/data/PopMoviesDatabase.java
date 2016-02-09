@@ -5,6 +5,7 @@ import net.simonvt.schematic.annotation.Table;
 
 /**
  * Created by Edison on 1/12/2016.
+ * Defines tables for the content provider
  */
 @Database(version = PopMoviesDatabase.VERSION)
 public final class PopMoviesDatabase {

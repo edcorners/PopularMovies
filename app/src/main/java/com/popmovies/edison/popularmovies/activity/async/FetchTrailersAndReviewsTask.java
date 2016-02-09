@@ -21,19 +21,27 @@ import retrofit.Retrofit;
 
 /**
  * Created by Edison on 1/14/2016.
+ * Reviews and Trailers are fetched from TMDB only if it's update time. (See PopMoviesDatabaseServices isUpdateTime method)
+ * NOTE: Sync adapter was implemented instead but didn't work because of the "40 transactions every 10 seconds" restriction of the API.
  */
 public class FetchTrailersAndReviewsTask extends AsyncTask<String, Void, Void> {
 
     private final String LOG_TAG = FetchTrailersAndReviewsTask.class.getSimpleName();
-    private final FetchTrailersAndReviewsTask.Listener listener;
     private Context mContext;
-    private boolean updated;
 
-    public FetchTrailersAndReviewsTask(Context context, FetchTrailersAndReviewsTask.Listener listener){
-        this.listener = listener;
+    /**
+     * Default constructor
+     * @param context application context
+     */
+    public FetchTrailersAndReviewsTask(Context context){
         this.mContext = context;
     }
 
+    /**
+     * doInBackground implementation
+     * @param params
+     * @return
+     */
     @Override
     protected Void doInBackground(String... params) {
         int movieId = Integer.valueOf(params[0]);
@@ -44,12 +52,16 @@ public class FetchTrailersAndReviewsTask extends AsyncTask<String, Void, Void> {
             PagedReviewList pagedReviewList = getReviews(movieId);
             PagedTrailerList pagedTrailerList = getTrailers(movieId);
             databaseServices.updateReviewsAndTrailers(pagedReviewList, pagedTrailerList, updateKey);
-            this.updated = true;
         }
 
         return null;
     }
 
+    /**
+     * Fetch reviews from TMBD
+     * @param movieId id of a movie from TMDB
+     * @return a list of reviews
+     */
     private PagedReviewList getReviews(long movieId) {
         PagedReviewList pagedReviewList = new PagedReviewList();
         Retrofit retrofit = new Retrofit.Builder()
@@ -70,6 +82,11 @@ public class FetchTrailersAndReviewsTask extends AsyncTask<String, Void, Void> {
         return pagedReviewList;
     }
 
+    /**
+     * Fetch trailers from TMDB
+     * @param movieId id of a movie from TMDB
+     * @return a list of trailers
+     */
     private PagedTrailerList getTrailers(long movieId) {
         PagedTrailerList pagedTrailerList = new PagedTrailerList();
         Retrofit retrofit = new Retrofit.Builder()
@@ -90,14 +107,4 @@ public class FetchTrailersAndReviewsTask extends AsyncTask<String, Void, Void> {
         return pagedTrailerList;
     }
 
-    public interface Listener{
-        void onTaskComplete();
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        if(updated)
-            listener.onTaskComplete();
-    }
 }
