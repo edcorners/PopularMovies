@@ -11,6 +11,7 @@ import retrofit.http.Query;
 
 /**
  * Created by Edison on 12/30/2015.
+ * Defines the TMDB webservices that will be consumed by the PopMovies app
  */
 public interface TMDBWebService {
 

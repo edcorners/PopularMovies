@@ -33,6 +33,8 @@ public class Trailer {
     @Expose
     private String site;
 
+    // Constructor
+
     public Trailer(Cursor cursor) {
         id = cursor.getString(TrailerColumnProjection.TRAILER_ID.ordinal());
         key = cursor.getString(TrailerColumnProjection.KEY.ordinal());
@@ -40,6 +42,9 @@ public class Trailer {
         site = cursor.getString(TrailerColumnProjection.SITE.ordinal());
     }
 
+    /**
+     * This enumeration defines the projection used when loading a trailer from a cursor
+     */
     public enum TrailerColumnProjection{
         _ID(PopMoviesDatabase.TRAILERS+"."+ TrailerColumns._ID),
         MOVIE_ID(PopMoviesDatabase.TRAILERS+"."+TrailerColumns.MOVIE_ID),
@@ -67,11 +72,20 @@ public class Trailer {
         }
     }
 
+    /**
+     * Sets this trailer's name to a TextView
+     * @param trailerTitleTextView TextView where a trailer name will be displayed
+     * @return TextView containing this trailer's name
+     */
     public TextView setName(TextView trailerTitleTextView) {
         trailerTitleTextView.setText(name);
         return trailerTitleTextView;
     }
 
+    /**
+     * Creates a ContentValues representation of this trailer
+     * @return the attributes of this trailer as a ContentValues object
+     */
     public ContentValues toContentValues() {
         ContentValues cv = new ContentValues();
         cv.put(TrailerColumns.KEY, key);
@@ -85,58 +99,34 @@ public class Trailer {
         return Uri.parse(YOUTUBE_VIDEO_BASE_URI + key);
     }
 
-    /**
-     * @return The id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id The id
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * @return The key
-     */
     public String getKey() {
         return key;
     }
 
-    /**
-     * @param key The key
-     */
     public void setKey(String key) {
         this.key = key;
     }
 
-    /**
-     * @return The name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name The name
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @return The site
-     */
     public String getSite() {
         return site;
     }
 
-    /**
-     * @param site The site
-     */
     public void setSite(String site) {
         this.site = site;
     }

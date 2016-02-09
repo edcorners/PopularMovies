@@ -82,7 +82,7 @@ public class Movie implements Parcelable {
     }
 
     /**
-     *
+     * This enumeration defines the projection used when loading a movie from a cursor
      */
     public enum MovieColumnProjection{
         _ID(PopMoviesDatabase.MOVIES+"."+MovieColumns._ID),
@@ -153,7 +153,7 @@ public class Movie implements Parcelable {
     }
 
     /**
-     *
+     * Builds the uri for a poster using the TMDB url, standard pic size and internal poster value.
      * @return
      */
     public Uri getPosterUri() {
@@ -167,8 +167,8 @@ public class Movie implements Parcelable {
     }
 
     /**
-     *
-     * @return
+     * Parses internal string date to java.util.Date
+     * @return this movie's release date as java.util.Date
      */
     public Date getReleaseDate() {
         Date parsedDate = null;
@@ -181,9 +181,9 @@ public class Movie implements Parcelable {
     }
 
     /**
-     *
-     * @param movieTitle
-     * @return
+     * Sets this movie's title to a TextView
+     * @param movieTitle TextView to be displayed as movie title
+     * @return this movie's title in a TextView
      */
     public TextView setTitle(TextView movieTitle) {
         movieTitle.setText(this.title);
@@ -191,10 +191,10 @@ public class Movie implements Parcelable {
     }
 
     /**
-     *
-     * @param context
-     * @param poster
-     * @return
+     * Sets this movie's poster to an ImageView
+     * @param context application context
+     * @param poster ImageView where the poster will be displayed
+     * @return this movie's poster in a ImageView
      */
     public ImageView setPoster(Context context, ImageView poster) {
         Picasso.with(context)
@@ -206,9 +206,9 @@ public class Movie implements Parcelable {
     }
 
     /**
-     *
-     * @param movieOverview
-     * @return
+     * Sets this movie's overview to a TextView
+     * @param movieOverview TextView where the overview will be displayed
+     * @return this movie's overview in a TextView
      */
     public TextView setOverview(TextView movieOverview) {
         movieOverview.setText(this.overview);
@@ -216,10 +216,10 @@ public class Movie implements Parcelable {
     }
 
     /**
-     *
-     * @param context
-     * @param movieRating
-     * @return
+     * Sets this movie's rating to a TextView
+     * @param context application context
+     * @param movieRating TextView where the rating should be displayed
+     * @return this movie's rating in a TextView
      */
     public TextView setRating(Context context, TextView movieRating) {
         movieRating.setText(Utility.formatRating(context, this.rating));
@@ -227,9 +227,9 @@ public class Movie implements Parcelable {
     }
 
     /**
-     *
-     * @param movieReleaseDate
-     * @return
+     * Sets this movie's release date to a TextView
+     * @param movieReleaseDate TextView where this movie's date should be set
+     * @return this movie's release data in a TextView
      */
     public TextView setReleaseDate(TextView movieReleaseDate) {
         String date = this.releaseDateString == null ? "-" : Utility.yearFormat.format(getReleaseDate());
@@ -254,8 +254,8 @@ public class Movie implements Parcelable {
     }
 
     /**
-     *
-     * @return
+     * Creates a representation of this movie as ContentValues
+     * @return ContentValues object with this movie's attributes, except for reviews and trailers.
      */
     public ContentValues toContentValues() {
         ContentValues cv = new ContentValues();

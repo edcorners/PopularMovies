@@ -12,6 +12,7 @@ import java.util.Vector;
 
 /**
  * Created by Edison on 12/30/2015.
+ * Represents a list of movies as returned from TMDB's service
  */
 public class PagedMovieList {
     @SerializedName("page")
@@ -21,6 +22,10 @@ public class PagedMovieList {
     @Expose
     private List<Movie> movies = new ArrayList<>();
 
+    /**
+     * Creates a list of content values with this list's movies
+     * @return vector containing this movies as content values
+     */
     public Vector<ContentValues> toMovieContentValues() {
         Vector<ContentValues> contentValuesVector = new Vector<>(movies.size());
         for(Movie movie: movies){
@@ -30,6 +35,11 @@ public class PagedMovieList {
         return contentValuesVector;
     }
 
+    /**
+     * Creates a list of content values ready to insert as SortingAttributes records
+     * @param sortPreference the sorting preference to be inserted
+     * @return vector containing a list of SortingAttributes records
+     */
     public Vector<ContentValues> toSortingAttributesContentValues(String sortPreference) {
         Vector<ContentValues> contentValuesVector = new Vector<>(movies.size());
         int position = 0;

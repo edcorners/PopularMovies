@@ -28,6 +28,8 @@ public class Review {
     @Expose
     private String url;
 
+    // Constructors
+
     public Review(Cursor cursor) {
         id = cursor.getString(ReviewColumnProjection.REVIEW_ID.ordinal());
         author = cursor.getString(ReviewColumnProjection.AUTHOR.ordinal());
@@ -35,6 +37,9 @@ public class Review {
         url = cursor.getString(ReviewColumnProjection.URL.ordinal());
     }
 
+    /**
+     * This enumeration defines the projection used when loading a review from a cursor
+     */
     public enum ReviewColumnProjection{
         _ID(PopMoviesDatabase.REVIEWS+"."+ ReviewColumns._ID),
         MOVIE_ID(PopMoviesDatabase.REVIEWS+"."+ReviewColumns.MOVIE_ID),
@@ -62,16 +67,30 @@ public class Review {
         }
     }
 
+    /**
+     * Sets this review's author to a TextView
+     * @param reviewAuthorTextView TextView to set this review's author
+     * @return a TextView displaying this review's author
+     */
     public TextView setAuthor(TextView reviewAuthorTextView) {
         reviewAuthorTextView.setText(author);
         return reviewAuthorTextView;
     }
 
+    /**
+     * Sets this review's content to a TextView
+     * @param reviewContentTextView TextView to set this review's content
+     * @return a TextView displaying this review's content
+     */
     public TextView setContent(TextView reviewContentTextView) {
         reviewContentTextView.setText(content);
         return reviewContentTextView;
     }
 
+    /**
+     * Creates a ContentValues representation of this review
+     * @return the attributes of this review as a ContentValues object
+     */
     public ContentValues toContentValues() {
         ContentValues cv = new ContentValues();
         cv.put(ReviewColumns.AUTHOR, author);
@@ -81,74 +100,35 @@ public class Review {
         return cv;
     }
 
-    /**
-     *
-     * @return
-     * The id
-     */
+
     public String getId() {
         return id;
     }
 
-    /**
-     *
-     * @param id
-     * The id
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     *
-     * @return
-     * The author
-     */
     public String getAuthor() {
         return author;
     }
 
-    /**
-     *
-     * @param author
-     * The author
-     */
     public void setAuthor(String author) {
         this.author = author;
     }
 
-    /**
-     *
-     * @return
-     * The content
-     */
     public String getContent() {
         return content;
     }
 
-    /**
-     *
-     * @param content
-     * The content
-     */
     public void setContent(String content) {
         this.content = content;
     }
 
-    /**
-     *
-     * @return
-     * The url
-     */
     public String getUrl() {
         return url;
     }
 
-    /**
-     *
-     * @param url
-     * The url
-     */
     public void setUrl(String url) {
         this.url = url;
     }

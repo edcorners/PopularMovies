@@ -12,6 +12,7 @@ import java.util.Vector;
 
 /**
  * Created by Edison on 1/14/2016.
+ * Represents a list of reviews as returned from TMDB's service
  */
 public class PagedTrailerList {
     @SerializedName("id")
@@ -28,6 +29,10 @@ public class PagedTrailerList {
         this.id = id;
     }
 
+    /**
+     * Creates a list of content values representing the list of trailers
+     * @return vector containing a ContentValues object for each trailer in this list
+     */
     public Vector<ContentValues> toContentValues() {
         Vector<ContentValues> contentValuesVector = new Vector<>(trailers.size());
         for(Trailer trailer: trailers){
@@ -54,38 +59,18 @@ public class PagedTrailerList {
         return trailers.isEmpty();
     }
 
-    /**
-     *
-     * @return
-     * The id
-     */
     public long getId() {
         return id;
     }
 
-    /**
-     *
-     * @param id
-     * The id
-     */
     public void setId(long id) {
         this.id = id;
     }
 
-    /**
-     *
-     * @return
-     * The results
-     */
     public List<Trailer> getTrailers() {
         return trailers;
     }
 
-    /**
-     *
-     * @param trailers
-     * The results
-     */
     public void setTrailers(List<Trailer> trailers) {
         this.trailers = trailers;
     }

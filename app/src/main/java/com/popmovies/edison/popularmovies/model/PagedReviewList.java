@@ -12,6 +12,7 @@ import java.util.Vector;
 
 /**
  * Created by Edison on 1/14/2016.
+ * Represents a list of reviews as returned from TMDB's service
  */
 public class PagedReviewList {
 
@@ -46,6 +47,10 @@ public class PagedReviewList {
         reviews.clear();
     }
 
+    /**
+     * Creates a list of content values representing the list of reviews
+     * @return vector containing this reviews as content values
+     */
     public Vector<ContentValues> toContentValues() {
         Vector<ContentValues> contentValuesVector = new Vector<>(reviews.size());
         for(Review review: reviews){
@@ -56,92 +61,42 @@ public class PagedReviewList {
         return contentValuesVector;
     }
 
-    /**
-     *
-     * @return
-     * The id
-     */
     public long getId() {
         return id;
     }
 
-    /**
-     *
-     * @param id
-     * The id
-     */
     public void setId(long id) {
         this.id = id;
     }
 
-    /**
-     *
-     * @return
-     * The page
-     */
     public Integer getPage() {
         return page;
     }
 
-    /**
-     *
-     * @param page
-     * The page
-     */
     public void setPage(Integer page) {
         this.page = page;
     }
 
-    /**
-     *
-     * @return
-     * The reviews
-     */
     public List<Review> getReviews() {
         return reviews;
     }
 
-    /**
-     *
-     * @param reviews
-     * The reviews
-     */
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
 
-    /**
-     *
-     * @return
-     * The totalPages
-     */
     public Integer getTotalPages() {
         return totalPages;
     }
 
-    /**
-     *
-     * @param totalPages
-     * The total_pages
-     */
     public void setTotalPages(Integer totalPages) {
         this.totalPages = totalPages;
     }
 
-    /**
-     *
-     * @return
-     * The totalResults
-     */
     public Integer getTotalResults() {
         return totalResults;
     }
 
-    /**
-     *
-     * @param totalResults
-     * The total_results
-     */
     public void setTotalResults(Integer totalResults) {
         this.totalResults = totalResults;
     }

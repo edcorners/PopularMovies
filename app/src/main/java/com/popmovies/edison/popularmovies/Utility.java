@@ -22,7 +22,7 @@ import android.preference.PreferenceManager;
 import java.text.SimpleDateFormat;
 
 /**
- *
+ * Utility class with general use methods and constants
  */
 public class Utility {
 
@@ -30,6 +30,11 @@ public class Utility {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     public static final SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
 
+    /**
+     * Retrieves the preferred sort order
+     * @param context application context
+     * @return preferred sort order
+     */
     public static String getPreferredSortOrder(Context context) {
         SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -38,6 +43,11 @@ public class Utility {
                 context.getString(R.string.pref_sort_by_popularity));
     }
 
+    /**
+     * Retrieves the preferred vote count
+     * @param context application context
+     * @return the preferred vote count for highest rated movies
+     */
     public static String getPreferredVoteCount(Context context) {
         SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -46,6 +56,11 @@ public class Utility {
                 context.getString(R.string.pref_1000_votes));
     }
 
+    /**
+     * Validates if current sort preference is "favorites"
+     * @param context application context
+     * @return true if current sort preference is "favorites". False otherwise
+     */
     public static boolean isFavoritesSort(Context context) {
         SharedPreferences sharedPrefs =
                 PreferenceManager.getDefaultSharedPreferences(context);
@@ -55,6 +70,12 @@ public class Utility {
         return sortBy.equals(context.getString(R.string.pref_sort_by_favorites));
     }
 
+    /**
+     * Formats a string to appear as "XX/10" where XX is a movie's rating
+     * @param context application context
+     * @param rating a movie's rating
+     * @return a string representation of a rating
+     */
     public static String formatRating(Context context, double rating){
         return String.format(context.getString(R.string.format_rating), rating);
     }
