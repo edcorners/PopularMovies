@@ -18,6 +18,6 @@ Allows them to change sort order via a setting: most popular, highest-rated or f
 ## Usage
 
 * Clone this repository on your machine open the code on Android Studio 2.0.
-* Create the file ´gradle.properties´ file and define the key ´TMDBApiKey´. Set your [TMDB](https://www.themoviedb.org/) API Key as the value.
+* Create the file `gradle.properties` file and define the key `TMDBApiKey`. Set your [TMDB](https://www.themoviedb.org/) API Key as the value.
 * Run.
 
