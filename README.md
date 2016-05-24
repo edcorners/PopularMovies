@@ -1,6 +1,6 @@
 # PopularMovies
 
-Popular Movies is an adroid app that presents the user with a grid arrangement of movie posters upon launch.
+Popular Movies is an android app that presents the user with a grid arrangement of movie posters upon launch.
 Allows them to change sort order via a setting: most popular, highest-rated or favorite. Allow the user to tap on a movie poster and transition to a details screen with additional information as:
 
 * Original title
