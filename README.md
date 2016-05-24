@@ -21,3 +21,6 @@ Allows them to change sort order via a setting: most popular, highest-rated or f
 * Create the file `gradle.properties` file and define the key `TMDBApiKey`. Set your [TMDB](https://www.themoviedb.org/) API Key as the value.
 * Run.
 
+#### Gradle Installation
+
+* Run ``gradlew app:installDebug`` with an android device connected on debug mode.
